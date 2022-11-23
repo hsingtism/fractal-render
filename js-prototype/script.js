@@ -1,7 +1,7 @@
 const variableVariable = 1 // 1 is julia (changing seed), 0 is fatou (changing function)
 // const constantValue = [0, 0]
 const constantValue = [0.262, 0.454]
-const iteratorFunction = (a, b) => addComplex(squareComplex(a), b)
+const iteratorFunction = (z, c) => addComplex(squareComplex(z), c)
 
 const ctx = document.getElementById('mainp').getContext('2d')
 const addComplex = (a, b) => [a[0] + b[0], a[1] + b[1]]
