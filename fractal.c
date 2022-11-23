@@ -4,20 +4,33 @@
 #include <math.h>
 
 int main() {
-    complex double topleft = 0;
-    complex double bottomright = 0;
-    char variable = "c"; // "c" or "z"
+    // TODO set function, constant, and variable
     return 0;
 }
 
 void renderFrame(complex double topleft, complex double bottomright, int width, int height, int seqID) {
     unsigned char image[height][width][3];
+    for (int h = 0; h < height; h++) {
+        for(int w = 0; w < width; w++) {
+            //TODO iterate and generate colors here
+            image[h][w][0] = 0;
+            image[h][w][1] = 0;
+            image[h][w][2] = 0;
+        }
+    }
+
     char filename[12];
-    filename[8] = ".";
-    filename[9] = "b";
-    filename[10] = "m";
-    filename[11] = "p";
+    for (char exp = 7; exp > -1; exp--)
+    {
+        filename[exp] = (unsigned char)(48 + seqID % 10);
+        seqID /= 10;
+    }
+    filename[8] = 0x2e;  // .
+    filename[9] = 0x62;  // b
+    filename[10] = 0x6d; // m
+    filename[11] = 0x70; // p
     generateBitmapImage(image, height, width, filename);
+    printf("%s rendered\n", filename);
 }
 
 void printComplex(complex double z) {
