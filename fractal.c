@@ -46,9 +46,10 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
                 + pixelDeltaH * w;
             int pixel = iterate(c, position, maxIteration); //TODO depending on of z or c is changed, this needs to be switched
             //TODO iterate and generate colors here
-            image[h][w][BLUE]  = pixel & 1 ? 0x7F : 0xFF; // blue
-            image[h][w][GREEN] = pixel & 1 ? 0x7F : 0xFF; // green
-            image[h][w][RED]   = pixel & 1 ? 0x7F : 0xFF; // red
+            uint32_t color = hsl2rgb(0, 0, (double)pixel);
+            image[h][w][BLUE]  = color >> 8;
+            image[h][w][GREEN] = color >> 16;
+            image[h][w][RED]   = color >> 24;
         }
     }
 
@@ -74,7 +75,7 @@ double hsl2rgb_internal_1(double p, double q, double t) {
     if(t < 0.16666666666666666) return p + (q - p) * 6 * t;
     if(t < 0.50000000000000000) return q;
     if(t < 0.66666666666666666) return p + (q - p) * (0.66666666666666666 - t) * 6;
-    return p;  
+    return p * 255;  
 }
 
 uint32_t hsl2rgb(double h, double s, double l) { 
