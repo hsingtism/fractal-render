@@ -12,11 +12,29 @@ for(let i = 0; i < 600; i++) {
     for(let j = 0; j < 600; j++) {
         let re = -2 + i / 150
         let im = -2 + j / 150
-        let color = classicF([re, im])
+        // let color = classicF([re, im])
+        let color = classicJ([re, im])
         drawPixel(i, j, color)
     }
 }
 
+
+function classicJ(x) {
+    let c = [0.262, 0.454]
+    let z = x
+
+    for (let i = 0; i < 10000; i++) {
+        let zf = z
+        z = addComplex(squareComplex(z), c)
+        if (absComplex(z) > 1000) {
+            return 'gray'
+        }
+        if (zf[0] == z[0] && zf[1] == z[1]) {
+            return 'black'
+        }
+    }
+    return 'black'
+}
 
 function classicF(x) {
     let c = x
