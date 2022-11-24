@@ -1,4 +1,5 @@
 #include "fractal.h"
+#include <stdlib.h>
 
 /* self */         complex double iterator(complex double x, complex double c);
 /* self */         void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
@@ -12,13 +13,13 @@ int main() {
     
 
     renderFrame(
-        -2 + 2 * I, // topleft
-        2 + -2 * I, // bottomright
+        -0.5 + 0.5 * I, // topleft
+        0.5 + -0.5 * I, // bottomright
         0 + 0 * I,  // c
         PIXEL_SEED, //TODO move this to settings
-        500,        // width
-        500,        // height
-        1,          // filename
+        1920,        // TODO width and height doesn't work for larger images, fix this 
+        1080,        // height
+        2,          // filename
         1000        // TODO move this to settings
     );
     return 0;
@@ -38,7 +39,10 @@ renders and save an image
 
 */
 void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration) {
-    unsigned char image[height][width][3];
+    // unsigned char image[height][width][3]; 
+    // must be on heap to prevent stack overflow
+    unsigned char * image = malloc(height * height * 3 * sizeof(unsigned char));
+
     complex double imagesize = bottomright - topleft;
     complex double pixelDeltaV = cimag(imagesize) / height;
     complex double pixelDeltaH = creal(imagesize) / width;
@@ -54,10 +58,13 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
                 pixel = iterate(secondParameter, position, maxIteration);
             }
             //TODO iterate and generate colors here
-            uint32_t color = hsl2rgb(pixel, 0.1, 0.75);
-            image[h][w][BLUE]  = color >> 8;
-            image[h][w][GREEN] = color >> 16;
-            image[h][w][RED]   = color >> 24;
+            uint32_t color = 0;
+            if(getfpbits(pixel) >> 63 == 0) {
+                color = hsl2rgb(pixel, 0.1, 0.9);
+            }
+            image[3 * width * h + 3 * w + BLUE]  = color >> 8;
+            image[3 * width * h + 3 * w + GREEN] = color >> 16;
+            image[3 * width * h + 3 * w + RED]   = color >> 24;
         }
     }
 
@@ -66,12 +73,13 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
         filename[exp] = (unsigned char)(48 + seqID % 10);
         seqID /= 10;
     }
-    filename[8] = 0x2e;  // .
-    filename[9] = 0x62;  // b
-    filename[10] = 0x6d; // m
-    filename[11] = 0x70; // p
-    filename[12] = 0x00; // null
+    filename[8] = (unsigned char)('.');
+    filename[9] = (unsigned char)('b');
+    filename[10] = (unsigned char)('m');
+    filename[11] = (unsigned char)('p');
+    filename[12] = (unsigned char)(0);
     generateBitmapImage((unsigned char *)image, height, width, filename);
+    free(image);
     printf("%s rendered\n", filename);
 }
 
@@ -84,5 +92,5 @@ double iterate(complex double z, complex double c, int maxIteration) {
         if(cabs(zf + 1.0) < 0.1) return 0.666;
         if(cabs(zf - (0.5842914495640625+1.174489106633826*I)) < 0.1) return 0.999;
     }
-    return 0.0;
+    return -0.1;
 }
