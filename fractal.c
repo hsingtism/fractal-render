@@ -6,22 +6,12 @@
 /* auxiliaryFunctions.c */uint32_t hsl2rgb(double h, double s, double l);
 /* settings.c */   double iterate(complex double z, complex double c, int maxIteration);
 /* settings.c */   complex double* colorTableData(complex double* table);
+/* settings.c */   void action();
+/* settings.c */   double escapeManager(complex double z, complex double previous, complex double initial, complex double c);
 /* render.c */     void generateBitmapImage(unsigned char *image, int height, int width, char *fileName);
 
 int main() {
-    complex double colorTable[COLOR_TABLE_ALLOC_LENGTH * 2];
-    
-
-    renderFrame(
-        -0.5 + 0.5 * I, // topleft
-        0.5 + -0.5 * I, // bottomright
-        0 + 0 * I,  // c
-        PIXEL_SEED, //TODO move this to settings
-        1920,        // TODO width and height doesn't work for larger images, fix this 
-        1080,        // height
-        2,          // filename
-        1000        // TODO move this to settings
-    );
+    action();
     return 0;
 }
 
@@ -64,10 +54,9 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
             }
             image[3 * width * h + 3 * w + BLUE]  = color >> 8;
             image[3 * width * h + 3 * w + GREEN] = color >> 16;
-            image[3 * width * h + 3 * w + RED]   = color >> 24;
+            image[3 * width * h + 3 * w + RED]   = color >> 24; // TODO program crashes here for certain image dimensions
         }
     }
-
     char filename[13];
     for (char exp = 7; exp > -1; exp--) { // base conversion
         filename[exp] = (unsigned char)(48 + seqID % 10);
@@ -84,13 +73,13 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
 }
 
 double iterate(complex double z, complex double c, int maxIteration) {
+    double initial = z;
     for (int i = 0; i < maxIteration; i++) {
-        complex double zf = z;
+        complex double previous = z;
         z = iterator(z, c);
         //TODO implement color table
-        if(cabs(zf - 1.0) < 0.1) return 0.333;
-        if(cabs(zf + 1.0) < 0.1) return 0.666;
-        if(cabs(zf - (0.5842914495640625+1.174489106633826*I)) < 0.1) return 0.999;
+        double escdef = escapeManager(z, previous, initial, c);
+        if(escdef) return escdef;
     }
-    return -0.1;
+    return -2.718;
 }

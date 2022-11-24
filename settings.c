@@ -1,57 +1,45 @@
 #include "fractal.h"
 #include <string.h>
 
-// both from auxiliaryFunctions.c
 complex double mandelbrot(complex double x, complex double c);
 complex double polynomial(complex double x, complex double *coefficents, int degree);
+void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
+
+/* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED*/
+// TODO consider moving main to here
+void action() {
+    renderFrame(
+        /* topleft */     -0.5 + 0.5 * I,
+        /* bottomright */ 0.5 + -0.5 * I,
+        /* constant */    0 + 0 * I,  // optional depending on how the iterator is set up
+        /* iterated val*/ PIXEL_SEED,
+        /* image width */ 1080,
+        /* image height */1080,
+        /* file name*/    2,
+        /* max iteration*/1000
+    );
+}
 
 /*
-color table - tells how the pixel should be colored depending on where it end up
-IT IS A 1D ARRAY, EACH ENTRY IS TWO ELEMENTS
-structure
-    - point - complex double - where the pixel end up, NaN payload for additional option
-    These NaN payload should be in the real part. * indicates that tolerance needs to be set
-        - paylmeaning
-        0x0   approaches actual NaN
-        0x1   
-        0x2   absolute value approaches Infinity
-        0x3  *absolute value greater than
-        0x4  *absolute value less than
-        0x5
-        0x6  *diffabs from previous iteration (for attraction)
-        0x7  *diffabs from initial value
-        0x8  *orbit detection threshold
-        0x9   
-        0xA   iteration exceeds
-        0xB   iteration exceeds - use voronoi on valid roots 
-        0x7ffffffffffff (all ones)
-    - tolerance and color - complex double double
-        - tolerance - encoded in real part - how close it has to be to exit. or properties set by nan payload
-        - color - encoded in imaginary part because color is imaginary - hue of color 0 to 1. infinity for white -infinity for black
+CAREFUL: 0.0 AND -0.0 IS RESERVED FOR "CONTINUE", TO ESCAPE WITH COLOR, USE 1.0
+
+z - current iteration value
+previous - previous iteration value
+initial - initial iteration value
+TODO implement orbit detection
+
+return value means the following
+  - any zero - continue iterating
+  - any negative (excl. -0.0, incl. negative infinity and negative nan) - black
+  - real number (0, 1] hue of color. 0 being blue
+  - positive nan
+   TODO implement nan payload here
 */
-complex double* colorTableData(complex double* table) {
-    /* ---------------- EDIT BELOW THIS LINE ---------------- */
-    complex double tableDraft[COLOR_TABLE_ALLOC_LENGTH * 2] = {
-        setfpbits(qNaNMask | APP_NAN)      + 0 * I, 0 - INFINITY * I,
-        setfpbits(qNaNMask | ABS_APP_INF)  + 0 * I, 0 - INFINITY * I,
-        setfpbits(qNaNMask | ABS_GRTR_THAN)+ 0 * I, 2 - INFINITY * I,
-        setfpbits(qNaNMask | ITER_EXCEEDS) + 0 * I, 0 + INFINITY * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-        0 + 0 * I, 0 + 0 * I,
-    };
-    /* ---------------- EDIT ABOVE THIS LINE ---------------- */
-    memcpy(table, tableDraft, COLOR_TABLE_ALLOC_LENGTH * 2 * sizeof(complex double));
-    return table;
+double escapeManager(complex double z, complex double previous, complex double initial, complex double c) {
+    if(cabs(z - 1.0) < 0.1) return 0.333;
+    if(cabs(z + 1.0) < 0.1) return 0.666;
+    if(cabs(z - (0.5842914495640625+1.174489106633826*I)) < 0.1) return 0.999;
+    return 0;
 }
 
 /*
@@ -81,6 +69,8 @@ The following functions are widely supported. Check your complex.h support for i
  - csinh - ccosh - ctanh
  and its inverse
  - casinh - cacosh - catanh
+
+ TODO make newton fractals more easy to define
 */
 complex double iterator(complex double x, complex double c) {
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
