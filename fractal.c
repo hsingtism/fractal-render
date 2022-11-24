@@ -1,24 +1,25 @@
 #include "fractal.h"
 
+/* self */         complex double iterator(complex double x, complex double c);
 /* self */         void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
-/* settings.c */   int iterate(complex double z, complex double c, int maxIteration);
 /* auxiliaryFunctions.c */uint32_t hsl2rgb(double h, double s, double l);
-/* settings.c */   complex double iterator(complex double x, complex double c);
+/* settings.c */   int iterate(complex double z, complex double c, int maxIteration);
+/* settings.c */   complex double* colorTableData(complex double* table);
 /* render.c */     void generateBitmapImage(unsigned char *image, int height, int width, char *fileName);
 
 int main() {
-    // TODO set function, constant, and variable
-    // TODO user specified color table
+    complex double colorTable[COLOR_TABLE_ALLOC_LENGTH * 2];
+    
 
     renderFrame(
         -2 + 2 * I, // topleft
         2 + -2 * I, // bottomright
         0 + 0 * I,  // c
-        PIXEL_FUNCTION, //TODO this argument will be removed, it is here for testing
+        PIXEL_FUNCTION, //TODO move this to settings
         500,        // width
         500,        // height
         1,          // filename
-        1000        // max iteration
+        1000        // TODO move this to settings
     );
     return 0;
 }
@@ -78,9 +79,9 @@ int iterate(complex double z, complex double c, int maxIteration) {
     for (int i = 0; i < maxIteration; i++) {
         complex double zf = z;
         z = iterator(z, c);
-        //TODO let this be customizable
+        //TODO implement color table
         if(cabs(z) > 1000) return 1;
-        if(cabs(zf - z) < 0.00001 && i > 0) return 0;
+        if(cabs(zf - z) < 0.00001) return 0;
     }
     return 0;
 }

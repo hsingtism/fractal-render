@@ -5,11 +5,11 @@ void printComplex(complex double z) {
     printf("%f + i*%f\n", creal(z), cimag(z));
 }
 
-inline uint64_t getfpbits(double x) {
+uint64_t getfpbits(double x) {
     return * ( uint64_t * ) &x;
 }
 
-inline double setfpbits(uint64_t x) {
+double setfpbits(uint64_t x) {
     return * ( double * ) &x;
 }
 

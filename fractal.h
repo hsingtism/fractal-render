@@ -10,6 +10,8 @@
 #define GREEN 1
 #define RED 2
 
+#define COLOR_TABLE_ALLOC_LENGTH 16
+
 #define qNaNMask        0xFFFF000000000000
 
 #define APP_NAN         0x0000000000000000
@@ -22,8 +24,6 @@
 #define ITER_EXCEEDS    0x000000000000000A
 #define USE_VORONOI     0x000000000000000B
 
-complex double* colorTable();
 void printComplex(complex double z);
-inline uint64_t getfpbits(double x);
-inline double setfpbits(uint64_t x);
-
+uint64_t getfpbits(double x);
+double setfpbits(uint64_t x);
