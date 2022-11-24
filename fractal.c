@@ -3,7 +3,7 @@
 /* self */         complex double iterator(complex double x, complex double c);
 /* self */         void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
 /* auxiliaryFunctions.c */uint32_t hsl2rgb(double h, double s, double l);
-/* settings.c */   int iterate(complex double z, complex double c, int maxIteration);
+/* settings.c */   double iterate(complex double z, complex double c, int maxIteration);
 /* settings.c */   complex double* colorTableData(complex double* table);
 /* render.c */     void generateBitmapImage(unsigned char *image, int height, int width, char *fileName);
 
@@ -15,7 +15,7 @@ int main() {
         -2 + 2 * I, // topleft
         2 + -2 * I, // bottomright
         0 + 0 * I,  // c
-        PIXEL_FUNCTION, //TODO move this to settings
+        PIXEL_SEED, //TODO move this to settings
         500,        // width
         500,        // height
         1,          // filename
@@ -47,14 +47,14 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
             complex double position = topleft 
                 + pixelDeltaV * h * I
                 + pixelDeltaH * w;
-            int pixel;
+            double pixel;
             if(mode) {
                 pixel = iterate(position, secondParameter, maxIteration);
             } else {
                 pixel = iterate(secondParameter, position, maxIteration);
             }
             //TODO iterate and generate colors here
-            uint32_t color = hsl2rgb(0, 0, (double)pixel);
+            uint32_t color = hsl2rgb(pixel, 0.1, 0.75);
             image[h][w][BLUE]  = color >> 8;
             image[h][w][GREEN] = color >> 16;
             image[h][w][RED]   = color >> 24;
@@ -75,13 +75,14 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
     printf("%s rendered\n", filename);
 }
 
-int iterate(complex double z, complex double c, int maxIteration) {
+double iterate(complex double z, complex double c, int maxIteration) {
     for (int i = 0; i < maxIteration; i++) {
         complex double zf = z;
         z = iterator(z, c);
         //TODO implement color table
-        if(cabs(z) > 1000) return 1;
-        if(cabs(zf - z) < 0.00001) return 0;
+        if(cabs(zf - 1.0) < 0.1) return 0.333;
+        if(cabs(zf + 1.0) < 0.1) return 0.666;
+        if(cabs(zf - (0.5842914495640625+1.174489106633826*I)) < 0.1) return 0.999;
     }
-    return 0;
+    return 0.0;
 }

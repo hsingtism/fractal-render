@@ -84,7 +84,9 @@ The following functions are widely supported. Check your complex.h support for i
 */
 complex double iterator(complex double x, complex double c) {
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
-    x = mandelbrot(x, c);
+    // x = mandelbrot(x, c);
+    x -= ((x * x - 1) * (x - (0.5842914495640625+1.174489106633826*I)))
+         / (2 * x * (x - (0.5842914495640625+1.174489106633826*I)) + (x * x - 1));
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
     return x;
 }
