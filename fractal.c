@@ -1,18 +1,16 @@
 #include "fractal.h"
-#include <stdio.h>
-#include <complex.h>
-#include <math.h>
-
-#define PIXEL_FUNCTION 0 // like classic mandelbrot
-#define PIXEL_SEED 1     // "julian"
-
-#define BLUE 0
-#define GREEN 1
-#define RED 2
 
 // use only for debug
 void printComplex(complex double z) {
     printf("%f + i*%f\n", creal(z), cimag(z));
+}
+
+inline uint64_t getfpbits(double x) {
+    return * ( uint64_t * ) &x;
+}
+
+inline double setfpbits(uint64_t x) {
+    return * ( double * ) &x;
 }
 
 void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
@@ -24,11 +22,12 @@ complex double polynomial(complex double x, complex double *coefficents, int deg
 
 int main() {
     // TODO set function, constant, and variable
+    // TODO user specified color table
     renderFrame(
         -2 + 2 * I, // topleft
         2 + -2 * I, // bottomright
         0 + 0 * I,  // c
-        PIXEL_FUNCTION,
+        PIXEL_FUNCTION, //TODO this argument will be removed, it is here for testing
         500,        // width
         500,        // height
         1,          // filename
@@ -38,6 +37,7 @@ int main() {
 }
 
 /*
+this giant function manages everything
 renders and save an image
   - topleft - complex number of the image's top left
   - bottomright - complex numer of the image's bottom right 
@@ -96,51 +96,4 @@ int iterate(complex double z, complex double c, int maxIteration) {
         if(cabs(zf - z) < 0.00001 && i > 0) return 0;
     }
     return 0;
-}
-
-/*
-The pixel value is iterated here. Most elementary functions are supported.
-If there is a more specific implementation, please use it because hardware is often more optimized for it.
-For example, when taking a square root, use csqrt(x) instead of cpow(x, 0.5).
-
-The following functions are widely supported. Check your complex.h support for it
- - mandelbrot(complex double z, complex double c) - make sure to include c
- - polynomial(complex x, complex double *coefficents, int degree) - optmized polynomial, 
-    - x is value, 
-    - *coefficients is array of coefficents, must be real, in reverse order of standard form
-    - degree is the degree of the polynomial  
- - + add
- - - subtract
- - * multiply
- - / divide
- - cexp - natural exp
- - clog - natural log
- - cpow - general exp
- - csqrt - sqrt
- trig functions
- - csin - ccos - ctan
- inverse trig
- - casin - cacos - catan
- hyperbolic trig
- - csinh - ccosh - ctanh
- and its inverse
- - casinh - cacosh - catanh
-*/
-complex double iterator(complex double x, complex double c) {
-    x = mandelbrot(x, c);
-    return x;
-}
-
-complex double mandelbrot(complex double x, complex double c) {
-    // return x * x + c;
-    complex double coeff[3] = {c, 0, 1};
-    return polynomial(x, coeff, 2);
-}
-
-complex double polynomial(complex double x, complex double *coefficents, int degree) {
-    complex double accumulator = coefficents[degree];
-    for(degree--; degree > -1; degree--) {
-        accumulator = coefficents[degree] + accumulator * x;
-    }
-    return accumulator;
 }

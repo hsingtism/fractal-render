@@ -1,6 +1,4 @@
 #include "fractal.h"
-#include <stdio.h>
-#include <math.h>
 
 #define BYTES_PER_PIXEL 3
 #define FILE_HEADER_SIZE 14
