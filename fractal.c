@@ -1,28 +1,15 @@
 #include "fractal.h"
 
-// use only for debug
-void printComplex(complex double z) {
-    printf("%f + i*%f\n", creal(z), cimag(z));
-}
-
-inline uint64_t getfpbits(double x) {
-    return * ( uint64_t * ) &x;
-}
-
-inline double setfpbits(uint64_t x) {
-    return * ( double * ) &x;
-}
-
-void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
-int iterate(complex double z, complex double c, int maxIteration);
-uint32_t hsl2rgb(double h, double s, double l);
-complex double iterator(complex double x, complex double c);
-complex double mandelbrot(complex double x, complex double c);
-complex double polynomial(complex double x, complex double *coefficents, int degree);
+/* self */         void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
+/* settings.c */   int iterate(complex double z, complex double c, int maxIteration);
+/* auxiliaryFunctions.c */uint32_t hsl2rgb(double h, double s, double l);
+/* settings.c */   complex double iterator(complex double x, complex double c);
+/* render.c */     void generateBitmapImage(unsigned char *image, int height, int width, char *fileName);
 
 int main() {
     // TODO set function, constant, and variable
     // TODO user specified color table
+
     renderFrame(
         -2 + 2 * I, // topleft
         2 + -2 * I, // bottomright

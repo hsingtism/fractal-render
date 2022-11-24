@@ -1,5 +1,9 @@
 #include "fractal.h"
 
+// both from auxiliaryFunctions.c
+complex double mandelbrot(complex double x, complex double c);
+complex double polynomial(complex double x, complex double *coefficents, int degree);
+
 /*
 color table - tells how the pixel should be colored depending on where it end up
 IT IS A 1D ARRAY, EACH ENTRY IS TWO ELEMENTS
@@ -23,8 +27,8 @@ structure
         - tolerance - encoded in real part - how close it has to be to exit. or properties set by nan payload
         - color - encoded in imaginary part because color is imaginary - hue of color 0 to 1. infinity for white -infinity for black
 */
-complex double* colorTable() {
-    complex double table[2] = {};
+complex double* colorTable(complex double* table) {
+    // TODO edit color tables here
     return table;
 }
 
@@ -59,16 +63,4 @@ The following functions are widely supported. Check your complex.h support for i
 complex double iterator(complex double x, complex double c) {
     x = mandelbrot(x, c);
     return x;
-}
-
-complex double mandelbrot(complex double x, complex double c) {
-    return x * x + c;
-}
-
-complex double polynomial(complex double x, complex double *coefficents, int degree) {
-    complex double accumulator = coefficents[degree];
-    for(degree--; degree > -1; degree--) {
-        accumulator = coefficents[degree] + accumulator * x;
-    }
-    return accumulator;
 }

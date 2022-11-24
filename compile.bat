@@ -1,0 +1,1 @@
+gcc fractal.c render.c settings.c auxiliaryFunctions.c

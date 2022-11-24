@@ -22,7 +22,8 @@
 #define ITER_EXCEEDS    0x000000000000000A
 #define USE_VORONOI     0x000000000000000B
 
-void generateBitmapImage(unsigned char *image, int height, int width, char *fileName);
-uint32_t hsl2rgb(double h, double s, double l);
 complex double* colorTable();
-complex double iterator(complex double x, complex double c);
+void printComplex(complex double z);
+inline uint64_t getfpbits(double x);
+inline double setfpbits(uint64_t x);
+
