@@ -1,19 +1,24 @@
 #include <stdio.h>
+#include <complex.h>
+
+complex double polynomial(complex double x, complex double *coefficents, int degree) {
+    complex double accumulator = coefficents[degree];
+    for(degree--; degree > -1; degree--) {
+        accumulator = coefficents[degree] + accumulator * x;
+    }
+    return accumulator;
+}
+
+void printComplex(complex double z) {
+    printf("%f + i*%f\n", creal(z), cimag(z));
+}
 
 int main() {
+    complex double coeff[3] = {0, 0, 1};
     for (int i = 0; i < 100; i++) {
-        int seqID = i;
-        char filename[12];
-        for (char exp = 7; exp > -1; exp--)
-        {
-            filename[exp] = (unsigned char)(48 + seqID % 10);
-            seqID /= 10;
-        }
-        filename[8] = 0x2e; // .
-        filename[9] = 0x62; // b
-        filename[10] = 0x6d;// m
-        filename[11] = 0x70;// p
-        printf("%s\n", filename);
+        printComplex(
+            polynomial(i, coeff, 2)
+        );
     }
 
     return 0;

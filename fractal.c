@@ -27,8 +27,8 @@ int main() {
     renderFrame(
         -2 + 2 * I, // topleft
         2 + -2 * I, // bottomright
-        0.1301 - 0.5605 * I,  // c
-        PIXEL_SEED,
+        0 + 0 * I,  // c
+        PIXEL_FUNCTION,
         500,        // width
         500,        // height
         1,          // filename
@@ -61,9 +61,9 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
                 + pixelDeltaH * w;
             int pixel;
             if(mode) {
-                pixel = iterate(position, secondParameter, maxIteration); //TODO depending on of z or c is changed, this needs to be switched
+                pixel = iterate(position, secondParameter, maxIteration);
             } else {
-                pixel = iterate(secondParameter, position, maxIteration); //TODO depending on of z or c is changed, this needs to be switched
+                pixel = iterate(secondParameter, position, maxIteration);
             }
             //TODO iterate and generate colors here
             uint32_t color = hsl2rgb(0, 0, (double)pixel);
@@ -132,12 +132,14 @@ complex double iterator(complex double x, complex double c) {
 }
 
 complex double mandelbrot(complex double x, complex double c) {
-    return x * x + c;
+    // return x * x + c;
+    complex double coeff[3] = {c, 0, 1};
+    return polynomial(x, coeff, 2);
 }
 
 complex double polynomial(complex double x, complex double *coefficents, int degree) {
     complex double accumulator = coefficents[degree];
-    for(; degree > 0; degree--) {
+    for(degree--; degree > -1; degree--) {
         accumulator = coefficents[degree] + accumulator * x;
     }
     return accumulator;
