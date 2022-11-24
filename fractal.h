@@ -14,16 +14,6 @@
 
 #define qNaNMask        0xFFFF000000000000
 
-#define APP_NAN         0x0000000000000000
-#define ABS_APP_INF     0x0000000000000002
-#define ABS_GRTR_THAN   0x0000000000000003
-#define ABS_LESS_THAN   0x0000000000000004
-#define DIFFABS_PREV    0x0000000000000006
-#define DIFFABS_INIT    0x0000000000000007
-#define ORBIT_DETECT    0x0000000000000008
-#define ITER_EXCEEDS    0x000000000000000A
-#define USE_VORONOI     0x000000000000000B
-
 void printComplex(complex double z);
 uint64_t getfpbits(double x);
 double setfpbits(uint64_t x);
