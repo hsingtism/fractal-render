@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <complex.h>
 #include <math.h>
-#include <stdint.h>
+
+#define PIXEL_FUNCTION 0 // like classic mandelbrot
+#define PIXEL_SEED 1     // "julian"
 
 #define BLUE 0
 #define GREEN 1
@@ -13,7 +15,7 @@ void printComplex(complex double z) {
     printf("%f + i*%f\n", creal(z), cimag(z));
 }
 
-void renderFrame(complex double topleft, complex double bottomright, complex double c, int width, int height, int seqID, int maxIteration);
+void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
 int iterate(complex double z, complex double c, int maxIteration);
 uint32_t hsl2rgb(double h, double s, double l);
 complex double iterator(complex double x, complex double c);
@@ -25,7 +27,8 @@ int main() {
     renderFrame(
         -2 + 2 * I, // topleft
         2 + -2 * I, // bottomright
-        0 + 0 * I,  // c
+        0.1301 - 0.5605 * I,  // c
+        PIXEL_SEED,
         500,        // width
         500,        // height
         1,          // filename
@@ -34,7 +37,19 @@ int main() {
     return 0;
 }
 
-void renderFrame(complex double topleft, complex double bottomright, complex double c, int width, int height, int seqID, int maxIteration) {
+/*
+renders and save an image
+  - topleft - complex number of the image's top left
+  - bottomright - complex numer of the image's bottom right 
+  - secondParameter
+  - mode whether to iterate
+  - width - image width in pixels
+  - height - image height in pixels
+  - seqID - this will be stringified for the filename
+  - maxIteration - the maximum amount of iteration for each pixel
+
+*/
+void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration) {
     unsigned char image[height][width][3];
     complex double imagesize = bottomright - topleft;
     complex double pixelDeltaV = cimag(imagesize) / height;
@@ -44,7 +59,12 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
             complex double position = topleft 
                 + pixelDeltaV * h * I
                 + pixelDeltaH * w;
-            int pixel = iterate(c, position, maxIteration); //TODO depending on of z or c is changed, this needs to be switched
+            int pixel;
+            if(mode) {
+                pixel = iterate(position, secondParameter, maxIteration); //TODO depending on of z or c is changed, this needs to be switched
+            } else {
+                pixel = iterate(secondParameter, position, maxIteration); //TODO depending on of z or c is changed, this needs to be switched
+            }
             //TODO iterate and generate colors here
             uint32_t color = hsl2rgb(0, 0, (double)pixel);
             image[h][w][BLUE]  = color >> 8;
@@ -54,8 +74,7 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
     }
 
     char filename[13];
-    for (char exp = 7; exp > -1; exp--)
-    {
+    for (char exp = 7; exp > -1; exp--) { // base conversion
         filename[exp] = (unsigned char)(48 + seqID % 10);
         seqID /= 10;
     }
@@ -66,35 +85,6 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
     filename[12] = 0x00; // null
     generateBitmapImage((unsigned char *)image, height, width, filename);
     printf("%s rendered\n", filename);
-}
-
-// based on https://stackoverflow.com/a/9493060/15879600
-double hsl2rgb_internal_1(double p, double q, double t) {
-    if(t < 0) t += 1;
-    if(t > 1) t -= 1;
-    if(t < 0.16666666666666666) return p + (q - p) * 6 * t;
-    if(t < 0.50000000000000000) return q;
-    if(t < 0.66666666666666666) return p + (q - p) * (0.66666666666666666 - t) * 6;
-    return p * 255;  
-}
-
-uint32_t hsl2rgb(double h, double s, double l) { 
-    uint32_t rgb = 0x0000006D;
-    // using bit hacking because it is way less effort.
-    // first 8 MSB is red, then green, then blue. last 8 bit not used
-    if (s < 0.001953125) { // s is 0
-        int lval = (unsigned char)round(l * 255);
-        return rgb | (lval << 8) | (lval << 16) | (lval << 24);
-    }
-
-    double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    double p = 2 * l - q;
-    return (
-        rgb
-        | ((unsigned char)round(hsl2rgb_internal_1(p, q, h - 0.3333333333333333)) << 8)
-        | ((unsigned char)round(hsl2rgb_internal_1(p, q, h                     )) << 16)
-        | ((unsigned char)round(hsl2rgb_internal_1(p, q, h + 0.3333333333333333)) << 24)
-    );
 }
 
 int iterate(complex double z, complex double c, int maxIteration) {
