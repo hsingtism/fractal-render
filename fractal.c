@@ -65,5 +65,8 @@ uint64_t iterate(complex double z, complex double c, int maxIteration) {
         uint64_t escdef = escapeManager(z, previous, initial, c, i);
         if(escdef > 0) return escdef;
     }
+    printf("max iteration exceeded at\n");
+    printf("z = "); printComplex(z);
+    printf("c = "); printComplex(c);
     return 0;
 }

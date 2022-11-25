@@ -36,7 +36,9 @@ TODO implement orbit detection
 
 return value means the following
   - all zero - continue iterating
-  - 2 single percision floats. 32 msb for lightness and 32 lsb for hue, both [0, 1] 
+  - 2 single percision floats encoded into a 64 bit uint. 
+    32 msb for lightness and 32 lsb for hue, both [0, 1] 
+  - for black, set hue to something non-zero to make it truthy
 */
 uint64_t escapeManager(complex double z, complex double previous, complex double initial, complex double c, int i) {
     
@@ -62,22 +64,14 @@ The following functions are widely supported. Check your complex.h support for i
     - x is value, 
     - *coefficients is array of coefficents, must be real, in reverse order of standard form
     - degree is the degree of the polynomial  
- - + add
- - - subtract
- - * multiply
- - / divide
- - cexp - natural exp
- - clog - natural log
- - cpow - general exp
- - csqrt - sqrt
- trig functions
- - csin - ccos - ctan
- inverse trig
- - casin - cacos - catan
- hyperbolic trig
- - csinh - ccosh - ctanh
- and its inverse
- - casinh - cacosh - catanh
+ - + add               - - subtract
+ - * multiply          - / divide
+ - cexp - natural exp  - clog - natural log
+ - cpow - general exp  - csqrt - sqrt
+ - csin                - ccos                - ctan (trig and inverse)
+ - casin               - cacos               - catan
+ - csinh               - ccosh               - ctanh (hyperbolic)
+ - casinh              - cacosh              - catanh
 
  TODO make newton fractals more easy to define
 */
