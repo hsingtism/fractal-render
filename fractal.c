@@ -73,12 +73,10 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
 
 uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
     if(initialCall) return iterate(iterator(z, c), c, maxIteration - 1, previous, 0);
-    if (maxIteration == 0) return 0;
-
-    previous = z;
+    if(maxIteration == 0) return 0;
 
     uint64_t escdef = escapeManager(z, previous, c, maxIteration);
     if(escdef > 0) return escdef;
     
-    return iterate(iterator(z, c), c, maxIteration - 1, previous, 0);
+    return iterate(iterator(z, c), c, maxIteration - 1, z, 0);
 }
