@@ -1,9 +1,9 @@
 #include "fractal.h"
 #include <string.h>
 
-complex double mandelbrot(complex double x, complex double c);
-complex double polynomial(complex double x, complex double *coefficents, int degree);
-void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
+cplxdbl mandelbrot(cplxdbl x, cplxdbl c);
+cplxdbl polynomial(cplxdbl x, cplxdbl *coefficents, int degree);
+void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration);
 
 /* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED*/
 // TODO consider moving main to here
@@ -40,7 +40,7 @@ return value means the following
     32 msb for lightness and 32 lsb for hue, both [0, 1] 
   - for black, set hue to something non-zero to make it truthy
 */
-uint64_t escapeManager(complex double z, complex double previous, complex double c, int i) {
+uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i) {
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
     
@@ -59,8 +59,8 @@ If there is a more specific implementation, please use it because hardware is of
 For example, when taking a square root, use csqrt(x) instead of cpow(x, 0.5).
 
 The following functions are widely supported. Check your complex.h support for it
- - mandelbrot(complex double z, complex double c) - make sure to include c
- - polynomial(complex x, complex double *coefficents, int degree) - optmized polynomial, 
+ - mandelbrot(cplxdbl z, cplxdbl c) - make sure to include c
+ - polynomial(complex x, cplxdbl *coefficents, int degree) - optmized polynomial, 
     - x is value, 
     - *coefficients is array of coefficents, must be real, in reverse order of standard form
     - degree is the degree of the polynomial  
@@ -75,7 +75,7 @@ The following functions are widely supported. Check your complex.h support for i
 
  TODO make newton fractals more easy to define
 */
-complex double iterator(complex double x, complex double c) {
+cplxdbl iterator(cplxdbl x, cplxdbl c) {
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
     

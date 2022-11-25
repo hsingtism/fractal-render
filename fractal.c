@@ -1,13 +1,13 @@
 #include "fractal.h"
 #include <stdlib.h>
 
-/* settings.c */   complex double iterator(complex double x, complex double c);
-/* self */         void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration);
+/* settings.c */   cplxdbl iterator(cplxdbl x, cplxdbl c);
+/* self */         void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration);
 /* auxiliaryFunctions.c */uint32_t hsl2rgb(double h, double s, double l);
-/* self */         uint64_t iterate(complex double z, complex double c, int maxIteration, complex double previous, char initialCall);
-/* settings.c */   complex double* colorTableData(complex double* table);
-/* settings.c */   uint64_t escapeManager(complex double z, complex double previous, complex double c, int i);
-/* render.c */     void generateBitmapImage(unsigned char *image, int height, int width, char *fileName);
+/* self */         uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall);
+/* settings.c */   cplxdbl* colorTableData(cplxdbl* table);
+/* settings.c */   uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i);
+/* render.c */     void generateBitmapImage(byte *image, int height, int width, char *fileName);
 
 /*
 this giant function manages everything
@@ -22,17 +22,17 @@ renders and save an image
   - maxIteration - the maximum amount of iteration for each pixel
 
 */
-void renderFrame(complex double topleft, complex double bottomright, complex double secondParameter, unsigned char mode, int width, int height, int seqID, int maxIteration) {
-    // unsigned char image[height][width][3]; 
+void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration) {
+    // byte image[height][width][3]; 
     // must be on heap to prevent stack overflow
-    unsigned char * image = malloc(height * height * 3 * sizeof(unsigned char));
+    byte * image = malloc(height * height * 3 * sizeof(byte));
 
-    complex double imagesize = bottomright - topleft;
-    complex double pixelDeltaV = cimag(imagesize) / height;
-    complex double pixelDeltaH = creal(imagesize) / width;
+    cplxdbl imagesize = bottomright - topleft;
+    cplxdbl pixelDeltaV = cimag(imagesize) / height;
+    cplxdbl pixelDeltaH = creal(imagesize) / width;
     for (int h = 0; h < height; h++) {
         for(int w = 0; w < width; w++) {
-            complex double position = topleft 
+            cplxdbl position = topleft 
                 + pixelDeltaV * h * I
                 + pixelDeltaH * w;
             uint64_t pixel = mode ? iterate(position, secondParameter, maxIteration, 0, 1) : iterate(secondParameter, position, maxIteration, 0, 1);
@@ -44,23 +44,23 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
     }
     char filename[13];
     for (char exp = 7; exp > -1; exp--) { // base conversion
-        filename[exp] = (unsigned char)(48 + seqID % 10);
+        filename[exp] = (byte)(48 + seqID % 10);
         seqID /= 10;
     }
-    filename[8] = (unsigned char)('.');
-    filename[9] = (unsigned char)('b');
-    filename[10] = (unsigned char)('m');
-    filename[11] = (unsigned char)('p');
-    filename[12] = (unsigned char)(0);
-    generateBitmapImage((unsigned char *)image, height, width, filename);
+    filename[8] = (byte)('.');
+    filename[9] = (byte)('b');
+    filename[10] = (byte)('m');
+    filename[11] = (byte)('p');
+    filename[12] = (byte)(0);
+    generateBitmapImage((byte *)image, height, width, filename);
     free(image);
     printf("%s rendered\n", filename);
 }
 
 // non-recursive version of below function
-// uint64_t iterate(complex double z, complex double c, int maxIteration) {
+// uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration) {
 //     for (int i = 0; i < maxIteration; i++) {
-//         complex double previous = z;
+//         cplxdbl previous = z;
 //         z = iterator(z, c);
 //         uint64_t escdef = escapeManager(z, previous, c, i);
 //         if(escdef > 0) return escdef;
@@ -68,7 +68,7 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
 //     return 0;
 // }
 
-uint64_t iterate(complex double z, complex double c, int maxIteration, complex double previous, char initialCall) {
+uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
     if(initialCall) return iterate(iterator(z, c), c, maxIteration - 1, previous, 0);
     if (maxIteration == 0) return 0;
 

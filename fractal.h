@@ -14,7 +14,10 @@
 
 #define qNaNMask        0xFFFF000000000000
 
-void printComplex(complex double z);
+typedef unsigned char byte;
+typedef complex double cplxdbl;
+
+void printComplex(cplxdbl z);
 
 uint64_t getfpbits64(double x);
 double setfpbits64(uint64_t x);

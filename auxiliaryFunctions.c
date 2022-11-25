@@ -1,7 +1,7 @@
 #include "fractal.h"
 
 // use only for debug
-void printComplex(complex double z) {
+void printComplex(cplxdbl z) {
     printf("%f + i*%f\n", creal(z), cimag(z));
 }
 
@@ -11,13 +11,13 @@ double setfpbits64(uint64_t x) { return * ( double * ) &x; }
 uint32_t getfpbits32(float x) { return * ( uint32_t * ) &x; }
 float setfpbits32(uint32_t x) { return * ( float * ) &x; }
 
-complex double mandelbrot(complex double x, complex double c) {
+cplxdbl mandelbrot(cplxdbl x, cplxdbl c) {
     return x * x + c;
 }
 
 // polynomial eval with horners method
-complex double polynomial(complex double x, complex double *coefficents, int degree) {
-    complex double accumulator = coefficents[degree];
+cplxdbl polynomial(cplxdbl x, cplxdbl *coefficents, int degree) {
+    cplxdbl accumulator = coefficents[degree];
     for(degree--; degree > -1; degree--) {
         accumulator = coefficents[degree] + accumulator * x;
     }
@@ -39,7 +39,7 @@ uint32_t hsl2rgb(double h, double s, double l) {
     // using bit hacking because it is way less effort.
     // first 8 MSB is red, then green, then blue. last 8 bit not used
     if (s < 0.001953125) { // s is 0
-        int lval = (unsigned char)round(l * 255);
+        int lval = (byte)round(l * 255);
         return rgb | (lval << 8) | (lval << 16) | (lval << 24);
     }
 
@@ -47,8 +47,8 @@ uint32_t hsl2rgb(double h, double s, double l) {
     double p = 2 * l - q;
     return (
         rgb
-        | ((unsigned char)round(hsl2rgb_internal_1(p, q, h - 0.3333333333333333)) << 8)
-        | ((unsigned char)round(hsl2rgb_internal_1(p, q, h                     )) << 16)
-        | ((unsigned char)round(hsl2rgb_internal_1(p, q, h + 0.3333333333333333)) << 24)
+        | ((byte)round(hsl2rgb_internal_1(p, q, h - 0.3333333333333333)) << 8)
+        | ((byte)round(hsl2rgb_internal_1(p, q, h                     )) << 16)
+        | ((byte)round(hsl2rgb_internal_1(p, q, h + 0.3333333333333333)) << 24)
     );
 }
