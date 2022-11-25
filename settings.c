@@ -40,7 +40,7 @@ return value means the following
     32 msb for lightness and 32 lsb for hue, both [0, 1] 
   - for black, set hue to something non-zero to make it truthy
 */
-uint64_t escapeManager(complex double z, complex double previous, complex double initial, complex double c, int i) {
+uint64_t escapeManager(complex double z, complex double previous, complex double c, int i) {
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
     
