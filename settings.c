@@ -12,13 +12,13 @@ int main() {
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
 
     renderFrame(
-        /* topleft */     -0.5 + 0.5 * I,
-        /* bottomright */ 0.5 + -0.5 * I,
+        /* topleft */     -2 + 2 * I,
+        /* bottomright */ 2 - 2 * I,
         /* constant */    0 + 0 * I,  // optional depending on how the iterator is set up
-        /* iterated val*/ PIXEL_SEED, // PIXEL_SEED maps pixel to "z", PIXEL_FUNCTION maps pixel to "c"
-        /* image width */ 1080,
-        /* image height */1080,
-        /* file name*/    2,
+        /* iterated val*/ PIXEL_FUNCTION, // PIXEL_SEED maps pixel to "z", PIXEL_FUNCTION maps pixel to "c"
+        /* image width */ 3000,
+        /* image height */3000,
+        /* file name*/    3,
         /* max iteration*/1000
     );
     
@@ -43,10 +43,12 @@ return value means the following
 uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i) {
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
-    
-    if(cabs(z - 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.3333);
-    if(cabs(z + 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.6666);
-    if(cabs(z - (0.5842914495640625+1.174489106633826*I)) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.9999);
+
+    // if(cabs(z - 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.3333);
+    // if(cabs(z + 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.6666);
+    // if(cabs(z - (0.5842914495640625+1.174489106633826*I)) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.9999);
+    if(cabs(z) > 2) return ((uint64_t)getfpbits32(powf((float)i / 1000.0f, 30.0f)) << 32) | getfpbits32(powf((float)i / 1000.0f, 5.0f) + 0.1); // TODO do not add 0.1 like this, implement something to normalize it
+    if(cabs(previous - z) < 0.00001) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
     
@@ -79,9 +81,9 @@ cplxdbl iterator(cplxdbl x, cplxdbl c) {
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
     
-    // x = mandelbrot(x, c);
-    x -= ((x * x - 1) * (x - (0.5842914495640625+1.174489106633826*I)))
-         / (2 * x * (x - (0.5842914495640625+1.174489106633826*I)) + (x * x - 1));
+    x = mandelbrot(x, c);
+    // x -= ((x * x - 1) * (x - (0.5842914495640625+1.174489106633826*I)))
+    //      / (2 * x * (x - (0.5842914495640625+1.174489106633826*I)) + (x * x - 1));
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
     
