@@ -7,7 +7,10 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
 
 /* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED*/
 // TODO consider moving main to here
-void action() {
+int main() {
+
+    /* ---------------- EDIT BELOW THIS LINE ---------------- */
+
     renderFrame(
         /* topleft */     -0.5 + 0.5 * I,
         /* bottomright */ 0.5 + -0.5 * I,
@@ -18,6 +21,10 @@ void action() {
         /* file name*/    2,
         /* max iteration*/1000
     );
+    
+    /* ---------------- EDIT ABOVE THIS LINE ---------------- */
+    
+    return 0;
 }
 
 /*
@@ -35,8 +42,8 @@ uint64_t escapeManager(complex double z, complex double previous, complex double
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
     
-    if(cabs(z - 1.0) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.3333); // TODO fix this type casting hell
-    if(cabs(z + 1.0) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.6666);
+    if(cabs(z - 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.3333);
+    if(cabs(z + 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.6666);
     if(cabs(z - (0.5842914495640625+1.174489106633826*I)) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.9999);
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */

@@ -6,14 +6,8 @@
 /* auxiliaryFunctions.c */uint32_t hsl2rgb(double h, double s, double l);
 /* settings.c */   uint64_t iterate(complex double z, complex double c, int maxIteration);
 /* settings.c */   complex double* colorTableData(complex double* table);
-/* settings.c */   void action();
 /* settings.c */   uint64_t escapeManager(complex double z, complex double previous, complex double initial, complex double c, int i);
 /* render.c */     void generateBitmapImage(unsigned char *image, int height, int width, char *fileName);
-
-int main() {
-    action();
-    return 0;
-}
 
 /*
 this giant function manages everything
@@ -42,8 +36,7 @@ void renderFrame(complex double topleft, complex double bottomright, complex dou
                 + pixelDeltaV * h * I
                 + pixelDeltaH * w;
             uint64_t pixel = mode ? iterate(position, secondParameter, maxIteration) : iterate(secondParameter, position, maxIteration);
-            // TODO fix this type casting hell
-            uint32_t color = hsl2rgb((double)setfpbits32((uint32_t)pixel), IMAGE_SATURATION, (double)setfpbits32((uint32_t)(pixel >> 32)));
+            uint32_t color = hsl2rgb(setfpbits32(pixel), IMAGE_SATURATION, setfpbits32(pixel >> 32)); // be careful, lots of auto type casting
             image[3 * width * h + 3 * w + BLUE]  = color >> 8;
             image[3 * width * h + 3 * w + GREEN] = color >> 16;
             image[3 * width * h + 3 * w + RED]   = color >> 24; // TODO program crashes here for certain image dimensions
