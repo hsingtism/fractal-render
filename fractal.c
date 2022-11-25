@@ -60,17 +60,6 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
     printf("%s rendered\n", filename);
 }
 
-// non-recursive version of below function
-// uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration) {
-//     for (int i = 0; i < maxIteration; i++) {
-//         cplxdbl previous = z;
-//         z = iterator(z, c);
-//         uint64_t escdef = escapeManager(z, previous, c, i);
-//         if(escdef > 0) return escdef;
-//     }
-//     return 0;
-// }
-
 uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
     if(initialCall) return iterate(iterator(z, c), c, maxIteration - 1, previous, 0);
     if(maxIteration == 0) return 0;

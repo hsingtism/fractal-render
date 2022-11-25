@@ -31,7 +31,7 @@ double hsl2rgb_internal_1(double p, double q, double t) {
     if(t < 0.16666666666666666) return p + (q - p) * 6 * t;
     if(t < 0.50000000000000000) return q;
     if(t < 0.66666666666666666) return p + (q - p) * (0.66666666666666666 - t) * 6;
-    return p * 255;  
+    return p;  
 }
 
 uint32_t hsl2rgb(double h, double s, double l) { 
@@ -47,8 +47,8 @@ uint32_t hsl2rgb(double h, double s, double l) {
     double p = 2 * l - q;
     return (
         rgb
-        | ((byte)round(hsl2rgb_internal_1(p, q, h - 0.3333333333333333)) << 8)
-        | ((byte)round(hsl2rgb_internal_1(p, q, h                     )) << 16)
-        | ((byte)round(hsl2rgb_internal_1(p, q, h + 0.3333333333333333)) << 24)
+        | ((byte)round(hsl2rgb_internal_1(p, q, h - 0.3333333333333333) * 255) << 8)
+        | ((byte)round(hsl2rgb_internal_1(p, q, h                     ) * 255) << 16)
+        | ((byte)round(hsl2rgb_internal_1(p, q, h + 0.3333333333333333) * 255) << 24)
     );
 }
