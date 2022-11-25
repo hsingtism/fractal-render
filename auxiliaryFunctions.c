@@ -5,12 +5,20 @@ void printComplex(complex double z) {
     printf("%f + i*%f\n", creal(z), cimag(z));
 }
 
-uint64_t getfpbits(double x) {
+uint64_t getfpbits64(double x) {
     return * ( uint64_t * ) &x;
 }
 
-double setfpbits(uint64_t x) {
+double setfpbits64(uint64_t x) {
     return * ( double * ) &x;
+}
+
+uint32_t getfpbits32(float x) {
+    return * ( uint32_t * ) &x;
+}
+
+float setfpbits32(uint32_t x) {
+    return * ( float * ) &x;
 }
 
 complex double mandelbrot(complex double x, complex double c) {
