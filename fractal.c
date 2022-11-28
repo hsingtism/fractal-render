@@ -25,7 +25,7 @@ renders and save an image
 void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mode, int width, int height, int seqID, int maxIteration) {
     // byte image[height][width][3]; 
     // must be on heap to prevent stack overflow
-    byte * image = malloc(height * height * 3 * sizeof(byte));
+    byte * image = malloc(width * height * 3 * sizeof(byte));
 
     cplxdbl imagesize = bottomright - topleft;
     cplxdbl pixelDeltaV = cimag(imagesize) / height;
@@ -40,7 +40,7 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
             uint32_t color = hsl2rgb(setfpbits32(pixel), IMAGE_SATURATION, setfpbits32(pixel >> 32)); // be careful, lots of auto type casting
             image[3 * width * h + 3 * w + BLUE]  = color >> 8;
             image[3 * width * h + 3 * w + GREEN] = color >> 16;
-            image[3 * width * h + 3 * w + RED]   = color >> 24; // TODO program crashes here for certain image dimensions
+            image[3 * width * h + 3 * w + RED]   = color >> 24;
         }
     }
 
