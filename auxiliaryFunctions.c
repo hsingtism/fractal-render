@@ -16,12 +16,21 @@ cplxdbl mandelbrot(cplxdbl x, cplxdbl c) {
 }
 
 // polynomial eval with horners method
-cplxdbl polynomial(cplxdbl x, cplxdbl *coefficents, int degree) {
+cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree) {
     cplxdbl accumulator = coefficents[degree];
     for(degree--; degree > -1; degree--) {
         accumulator = coefficents[degree] + accumulator * x;
     }
     return accumulator;
+}
+
+// polynomial eval with roots (fundemental thorem)
+cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree) {
+    cplxdbl accumlator = 1;
+    for(degree--; degree > -1; degree--) {
+        accumlator *= x - roots[degree];
+    }
+    return accumlator;
 }
 
 // based on https://stackoverflow.com/a/9493060/15879600
