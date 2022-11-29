@@ -16,21 +16,17 @@ cplxdbl mandelbrot(cplxdbl x, cplxdbl c) {
 }
 
 // polynomial eval with horners method
-cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree) {
-    cplxdbl accumulator = coefficents[degree];
-    for(degree--; degree > -1; degree--) {
-        accumulator = coefficents[degree] + accumulator * x;
-    }
-    return accumulator;
+// accumlator is used for internal recusion, set to 0
+cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator) {
+    if (degree == 0) return accumlator;
+    return polynomialCoeff(x, coefficents, degree - 1, coefficents[degree - 1] + accumlator * x);
 }
 
 // polynomial eval with roots (fundemental thorem)
-cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree) {
-    cplxdbl accumlator = 1;
-    for(degree--; degree > -1; degree--) {
-        accumlator *= x - roots[degree];
-    }
-    return accumlator;
+// scaling is used for internal recursion, set to 1 if there is no constant factor
+cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling) {
+    if (degree == 0) return scaling;
+    return polynomialRoots(x, roots, degree - 1, scaling * (x - roots[degree - 1]));
 }
 
 // based on https://stackoverflow.com/a/9493060/15879600

@@ -2,11 +2,11 @@
 #include <string.h>
 
 cplxdbl mandelbrot(cplxdbl x, cplxdbl c);
-cplxdbl polynomial(cplxdbl x, cplxdbl *coefficents, int degree);
+cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
+cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
 void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration);
 
-/* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED*/
-// TODO consider moving main to here
+/* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED */
 int main() {
 
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
@@ -16,8 +16,8 @@ int main() {
         /* bottomright */ 2 - 2 * I,
         /* constant */    0 + 0 * I,  // optional depending on how the iterator is set up
         /* iterated val*/ PIXEL_FUNCTION, // PIXEL_SEED maps pixel to "z", PIXEL_FUNCTION maps pixel to "c"
-        /* image width */ 3000,
-        /* image height */3000,
+        /* image width */ 1920,
+        /* image height */1080,
         /* file name*/    3,
         /* max iteration*/1000
     );
