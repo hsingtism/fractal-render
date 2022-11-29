@@ -25,9 +25,7 @@ void generateBitmapImage(byte *image, int height, int width, char *fileName) {
 
     int bufferPtr = 0; 
 
-    // FILE HEADER
     byte fileHeader[FILE_HEADER_SIZE] = {0};
-
     fileHeader[0] = (byte)('B');
     fileHeader[1] = (byte)('M');
     fileHeader[2] = (byte)(fileSize);
@@ -38,9 +36,7 @@ void generateBitmapImage(byte *image, int height, int width, char *fileName) {
     memcpy(buffer + bufferPtr, fileHeader, FILE_HEADER_SIZE);
     bufferPtr += FILE_HEADER_SIZE;
 
-    // INFO HEADER
-    static byte infoHeader[INFO_HEADER_SIZE] = {0};
-
+    byte infoHeader[INFO_HEADER_SIZE] = {0};
     infoHeader[0] = (byte)(INFO_HEADER_SIZE);
     infoHeader[4] = (byte)(width);
     infoHeader[5] = (byte)(width >> 8);

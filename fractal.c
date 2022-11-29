@@ -2,10 +2,8 @@
 #include <stdlib.h>
 
 /* settings.c */   cplxdbl iterator(cplxdbl x, cplxdbl c);
-/* self */         void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mode, int width, int height, int seqID, int maxIteration);
 /* auxiliaryFunctions.c */uint32_t hsl2rgb(double h, double s, double l);
 /* self */         uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall);
-/* settings.c */   cplxdbl* colorTableData(cplxdbl* table);
 /* settings.c */   uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i);
 /* render.c */     void generateBitmapImage(byte *image, int height, int width, char *fileName);
 
@@ -49,13 +47,13 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
         filename[exp] = (byte)(48 + seqID % 10);
         seqID /= 10;
     }
-    filename[8] = (byte)('.');
-    filename[9] = (byte)('b');
-    filename[10] = (byte)('m');
-    filename[11] = (byte)('p');
-    filename[12] = (byte)(0);
+    filename[8] = (byte)'.';
+    filename[9] = (byte)'b';
+    filename[10] = (byte)'m';
+    filename[11] = (byte)'p';
+    filename[12] = (byte)0;
 
-    generateBitmapImage((byte *)image, height, width, filename);
+    generateBitmapImage(image, height, width, filename);
     free(image);
     printf("%s rendered\n", filename);
 }
