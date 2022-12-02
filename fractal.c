@@ -28,7 +28,6 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
     cplxdbl imagesize = bottomright - topleft;
     cplxdbl pixelDeltaV = cimag(imagesize) / height;
     cplxdbl pixelDeltaH = creal(imagesize) / width;
-    
     for (int h = 0; h < height; h++) {
         for(int w = 0; w < width; w++) {
             cplxdbl position = topleft 
@@ -58,9 +57,9 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
     printf("%s rendered\n", filename);
 }
 
+// non-recursive calls must pass 1 to initialCall and/or NAN to previous
 uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
-    // initial call not checked because it does not have a previous
-    if(initialCall) return iterate(iterator(z, c), c, maxIteration - 1, previous, 0); 
+    if(initialCall) previous = NAN;
 
     uint64_t escdef = escapeManager(z, previous, c, maxIteration);
     if(escdef > 0) return escdef;
@@ -68,3 +67,16 @@ uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char 
     if(maxIteration == 0) return 0;
     return iterate(iterator(z, c), c, maxIteration - 1, z, 0);
 }
+
+// uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
+//     for(; maxIteration; maxIteration--) {
+//         previous = z;
+//         z = iterator(z, c);
+        
+//         uint64_t escdef = escapeManager(z, previous, c, maxIteration);
+//         if(escdef > 0) return escdef;
+
+//     }
+
+//     return 0;
+// }

@@ -16,7 +16,9 @@ With some programming, it is possible to render very high resolution prints and/
 ## Compiling
 
 Most c compilers should work. I developed it with gcc, the following command is used:
-`gcc fractal.c render.c settings.c auxiliaryFunctions.c`
+`gcc fractal.c render.c settings.c auxiliaryFunctions.c -O3`
+
+__MAKE SURE TO COMPILE WITH TAIL-CALL RECURSION OPTIMIZATION ENABLED__ for larger iteration sizes
 
 ## Setting parameters
 

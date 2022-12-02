@@ -10,20 +10,29 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, 
 // TODO auto zoom based on detail leavel
 
 /* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED */
+
+#define CENTER 0.3602404434376125 + -0.6413130610648031 * I
+#define Z_SPEED_R 1
+#define Z_SPEED_I 1
+int maxIter_GLOBAL = 0;
 int main() {
 
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
-
-    renderFrame(
-        /* topleft */     -2 + 2 * I,
-        /* bottomright */ 2 - 2 * I,
-        /* constant */    0 + 0 * I,  // optional depending on how the iterator is set up
-        /* iterated val*/ PIXEL_FUNCTION, // PIXEL_SEED maps pixel to "z", PIXEL_FUNCTION maps pixel to "c"
-        /* image width */ 1920,
-        /* image height */1080,
-        /* file name*/    3,
-        /* max iteration*/1000
-    );
+    int i = 8;
+    // for(int i = 8; i < 20; i++) {
+        maxIter_GLOBAL = (int)exp((double)i / 4 + 8); // TODO a way to detect this
+        printf("%d\n", maxIter_GLOBAL);
+        renderFrame(
+            /* topleft */     CENTER - cexp(-i * Z_SPEED_R) + cexp(-i * Z_SPEED_I) * I,//-2 + 2 * I,
+            /* bottomright */ CENTER + cexp(-i * Z_SPEED_R) - cexp(-i * Z_SPEED_I) * I,//2 - 2 * I,
+            /* constant */    0 + 0 * I,  // optional depending on how the iterator is set up
+            /* iterated val*/ PIXEL_FUNCTION, // PIXEL_SEED maps pixel to "z", PIXEL_FUNCTION maps pixel to "c"
+            /* image width */ 1000,
+            /* image height */1000,
+            /* file name*/    i + 16,
+            /* max iteration*/maxIter_GLOBAL
+        );
+    // }
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
     
@@ -44,13 +53,14 @@ return value means the following
   - for black, set hue to something non-zero to make it truthy
 */
 uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i) {
+    if (getfpbits64(creal(previous)) == getfpbits64(NAN)) return 0;
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
 
     // if(cabs(z - 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.3333);
     // if(cabs(z + 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.6666);
     // if(cabs(z - (0.5842914495640625+1.174489106633826*I)) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.9999);
-    if(cabs(z) > 2) return ((uint64_t)getfpbits32(powf((float)i / 1000.0f, 30.0f)) << 32) | getfpbits32(powf((float)i / 1000.0f, 5.0f) + 0.1); // TODO do not add 0.1 like this, implement something to normalize it
+    if(cabs(z) > 2) return ((uint64_t)getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 30.0f)) << 32) | getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 5.0f));
     if(cabs(previous - z) < 0.00001) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
