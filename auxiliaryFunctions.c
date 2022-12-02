@@ -1,9 +1,13 @@
 #include "fractal.h"
 
+
+
 // use only for debug
 void printComplex(cplxdbl z) {
     printf("%f + i*%f\n", creal(z), cimag(z));
 }
+
+
 
 // floating point <-> its bit representation
 uint64_t getfpbits64(double x) { return * ( uint64_t * ) &x; }
@@ -11,8 +15,17 @@ double setfpbits64(uint64_t x) { return * ( double * ) &x; }
 uint32_t getfpbits32(float x) { return * ( uint32_t * ) &x; }
 float setfpbits32(uint32_t x) { return * ( float * ) &x; }
 
+
+
 cplxdbl mandelbrot(cplxdbl x, cplxdbl c) {
     return x * x + c;
+}
+
+cplxdbl mean(cplxdbl *val, int length) {
+    for(int i = 1; i < length; i++) { // using val[0] as accumlator
+        val[0] += val[i];
+    }
+    return val[0] / length;
 }
 
 // polynomial eval with horners method
@@ -28,6 +41,8 @@ cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling) 
     if (degree == 0) return scaling;
     return polynomialRoots(x, roots, degree - 1, scaling * (x - roots[degree - 1]));
 }
+
+
 
 // based on https://stackoverflow.com/a/9493060/15879600
 double hsl2rgb_internal_1(double p, double q, double t) {

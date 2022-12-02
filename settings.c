@@ -1,10 +1,13 @@
 #include "fractal.h"
-#include <string.h>
 
 cplxdbl mandelbrot(cplxdbl x, cplxdbl c);
 cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
 cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
+cplxdbl mean(cplxdbl *val, int length);
 void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration);
+
+// TODO derviative calculation for newtons method
+// TODO auto zoom based on detail leavel
 
 /* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED */
 int main() {
@@ -28,11 +31,11 @@ int main() {
 }
 
 /*
-z - current iteration value
-previous - previous iteration value
-initial - initial iteration value
-i - number of iterations (for colorinf)
-TODO implement orbit detection
+  - z - current iteration value
+  - previous - previous iteration value
+  - initial - initial iteration value
+  - i - number of iterations (for coloring)
+TODO implement orbit detection (maybe)
 
 return value means the following
   - all zero - continue iterating
@@ -56,34 +59,36 @@ uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i) {
 }
 
 /*
-The pixel value is iterated here. Most elementary functions are supported.
-If there is a more specific implementation, please use it because hardware is often more optimized for it.
-For example, when taking a square root, use csqrt(x) instead of cpow(x, 0.5).
+The pixel value is iterated here. 
+All basic operations ( + - * / ) and functions supported by complex.h is avilable here
 
-The following functions are widely supported. Check your complex.h support for it
- - mandelbrot(cplxdbl z, cplxdbl c) - make sure to include c
- - polynomial(complex x, cplxdbl *coefficents, int degree) - optmized polynomial, 
-    - x is value, 
-    - *coefficients is array of coefficents, must be real, in reverse order of standard form
-    - degree is the degree of the polynomial  
- - + add               - - subtract
- - * multiply          - / divide
- - cexp - natural exp  - clog - natural log
- - cpow - general exp  - csqrt - sqrt
- - csin                - ccos                - ctan (trig and inverse)
- - casin               - cacos               - catan
- - csinh               - ccosh               - ctanh (hyperbolic)
- - casinh              - cacosh              - catanh
+Additionally, the following functions are intended to be used in here
 
- TODO make newton fractals more easy to define
+cplxdbl mean(cplxdbl *val, int length);
+  - calculates the mean of array
+
+cplxdbl mandelbrot(cplxdbl x, cplxdbl c);
+  - iterate with the mandelbrot set function 
+cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
+  - evaluate polynomials with a list of coefficents (horners method)
+cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
+  - evaluate polynomials with a list of roots (simple x - root method)
+  - x is value
+  - *coefficents or *roots is an array of coefficents and roots
+  - *coefficents must be in reverse standard form c[d] is the coefficent of x^d
+  - degree is the degree of the polynomial
+  - accumlator should be 0 
+  - scaling should be 1 (or the factored out constant)
+
+ TODO make newton fractals more easy to define d/dx of factored polynomials
 */
 cplxdbl iterator(cplxdbl x, cplxdbl c) {
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
     
     x = mandelbrot(x, c);
-    // x -= ((x * x - 1) * (x - (0.5842914495640625+1.174489106633826*I)))
-    //      / (2 * x * (x - (0.5842914495640625+1.174489106633826*I)) + (x * x - 1));
+    // (x - (0.5842914495640625+1.174489106633826*I)))
+
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
     
