@@ -9,16 +9,18 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, 
 // TODO derviative calculation for newtons method
 // TODO auto zoom based on detail leavel
 
-/* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED */
 
-#define CENTER 0.3602404434376125 + -0.6413130610648031 * I
+#define CENTER 0.3602404434379782791201 -0.6413130610650879905525 * I
 #define Z_SPEED_R 1
 #define Z_SPEED_I 1
 int maxIter_GLOBAL = 0;
+#include "defineI.h"
+
+/* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED */
 int main() {
 
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
-    int i = 8;
+    int i = cmdfeedI - 4;
     // for(int i = 8; i < 20; i++) {
         maxIter_GLOBAL = (int)exp((double)i / 4 + 8); // TODO a way to detect this
         printf("%d\n", maxIter_GLOBAL);
@@ -60,7 +62,7 @@ uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i) {
     // if(cabs(z - 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.3333);
     // if(cabs(z + 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.6666);
     // if(cabs(z - (0.5842914495640625+1.174489106633826*I)) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.9999);
-    if(cabs(z) > 2) return ((uint64_t)getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 30.0f)) << 32) | getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 5.0f));
+    if(cabs(z) > 2) return ((uint64_t)getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 50.0f * powf(1.1, cmdfeedI))) << 32) | getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 5.0f));
     if(cabs(previous - z) < 0.00001) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
