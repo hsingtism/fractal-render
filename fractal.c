@@ -26,8 +26,26 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
     byte * image = malloc(width * height * 3 * sizeof(byte));
 
     cplxdbl imagesize = bottomright - topleft;
-    cplxdbl pixelDeltaV = cimag(imagesize) / height;
-    cplxdbl pixelDeltaH = creal(imagesize) / width;
+    double pixelDeltaV = cimag(imagesize) / height;
+    double pixelDeltaH = creal(imagesize) / width;
+
+    double fpdelta_real = fmax( // in case the frame crosses exponents
+            fabs(creal(topleft) - setfpbits64(getfpbits64(creal(topleft)) ^ 0x1)),
+            fabs(creal(bottomright) - setfpbits64(getfpbits64(creal(bottomright)) ^ 0x1))
+        );
+    double fpdelta_imag = fmax(
+            fabs(cimag(topleft) - setfpbits64(getfpbits64(cimag(topleft)) ^ 0x1)),
+            fabs(cimag(bottomright) - setfpbits64(getfpbits64(cimag(bottomright)) ^ 0x1))
+        );
+
+    if(fpdelta_imag * FP_INEXACT_WARNING_COEFFICENT >= pixelDeltaV) {
+        printf("potential floating point impercision. imag-axis avg r/p %f", pixelDeltaV / fpdelta_imag);
+    }
+    if(fpdelta_real * FP_INEXACT_WARNING_COEFFICENT >= pixelDeltaH) {
+        printf("potential floating point impercision. real-axis avg r/p %f", pixelDeltaH / fpdelta_real);
+    }
+
+
     for (int h = 0; h < height; h++) {
         for(int w = 0; w < width; w++) {
             cplxdbl position = topleft 

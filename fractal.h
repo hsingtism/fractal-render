@@ -7,6 +7,7 @@
 #define PIXEL_SEED 1     // "julian"
 
 #define IMAGE_SATURATION 1.0
+#define FP_INEXACT_WARNING_COEFFICENT 4.0
 
 #define BLUE 0
 #define GREEN 1
