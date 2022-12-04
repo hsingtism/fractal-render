@@ -58,25 +58,25 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
 }
 
 // non-recursive calls must pass 1 to initialCall and/or NAN to previous
-uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
-    if(initialCall) previous = NAN;
-
-    uint64_t escdef = escapeManager(z, previous, c, maxIteration);
-    if(escdef > 0) return escdef;
-    
-    if(maxIteration == 0) return 0;
-    return iterate(iterator(z, c), c, maxIteration - 1, z, 0);
-}
-
 // uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
-//     for(; maxIteration; maxIteration--) {
-//         previous = z;
-//         z = iterator(z, c);
-        
-//         uint64_t escdef = escapeManager(z, previous, c, maxIteration);
-//         if(escdef > 0) return escdef;
+//     if(initialCall) previous = NAN;
 
-//     }
-
-//     return 0;
+//     uint64_t escdef = escapeManager(z, previous, c, maxIteration);
+//     if(escdef > 0) return escdef;
+    
+//     if(maxIteration == 0) return 0;
+//     return iterate(iterator(z, c), c, maxIteration - 1, z, 0);
 // }
+
+uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
+    for(; maxIteration; maxIteration--) {
+        previous = z;
+        z = iterator(z, c);
+        
+        uint64_t escdef = escapeManager(z, previous, c, maxIteration);
+        if(escdef > 0) return escdef;
+
+    }
+
+    return 0;
+}
