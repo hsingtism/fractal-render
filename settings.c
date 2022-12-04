@@ -7,7 +7,6 @@ cplxdbl mean(cplxdbl *val, int length);
 void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration);
 
 // TODO derviative calculation for newtons method
-// TODO auto zoom based on detail leavel
 
 
 #define CENTER 0.3602404434379782791201 -0.6413130610650879905525 * I
@@ -46,7 +45,6 @@ int main() {
   - previous - previous iteration value
   - initial - initial iteration value
   - i - number of iterations (for coloring)
-TODO implement orbit detection (maybe)
 
 return value means the following
   - all zero - continue iterating
@@ -92,7 +90,6 @@ cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
   - accumlator should be 0 
   - scaling should be 1 (or the factored out constant)
 
- TODO make newton fractals more easy to define d/dx of factored polynomials
 */
 cplxdbl iterator(cplxdbl x, cplxdbl c) {
     

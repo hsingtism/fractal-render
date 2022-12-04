@@ -38,11 +38,11 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
             fabs(cimag(bottomright) - setfpbits64(getfpbits64(cimag(bottomright)) ^ 0x1))
         );
 
-    if(fpdelta_imag * FP_INEXACT_WARNING_COEFFICENT >= pixelDeltaV) {
-        printf("potential floating point impercision. imag-axis avg r/p %f", pixelDeltaV / fpdelta_imag);
+    if(fpdelta_imag * FP_INEXACT_WARNING_COEFFICENT >= fabs(pixelDeltaV)) {
+        printf("potential floating point impercision. imag-axis avg r/p %f\n", fabs(pixelDeltaV) / fpdelta_imag);
     }
-    if(fpdelta_real * FP_INEXACT_WARNING_COEFFICENT >= pixelDeltaH) {
-        printf("potential floating point impercision. real-axis avg r/p %f", pixelDeltaH / fpdelta_real);
+    if(fpdelta_real * FP_INEXACT_WARNING_COEFFICENT >= fabs(pixelDeltaH)) {
+        printf("potential floating point impercision. real-axis avg r/p %f\n", fabs(pixelDeltaH) / fpdelta_real);
     }
 
 
