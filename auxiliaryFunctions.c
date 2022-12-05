@@ -72,3 +72,8 @@ uint32_t hsl2rgb(double h, double s, double l) {
         | ((byte)round(hsl2rgb_internal_1(p, q, h + 0.3333333333333333) * 255) << 24)
     );
 }
+
+// calling cabs after each iteration is very wasteful, this can be used instead
+double maxAxis(cplxdbl x) {
+    return fmax(fabs(creal(x)), fabs(cimag(x)));
+}

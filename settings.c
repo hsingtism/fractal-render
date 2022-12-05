@@ -4,6 +4,7 @@ cplxdbl mandelbrot(cplxdbl x, cplxdbl c);
 cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
 cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
 cplxdbl mean(cplxdbl *val, int length);
+double maxAxis(cplxdbl x);
 void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration);
 
 // TODO derviative calculation for newtons method
@@ -52,6 +53,8 @@ return value means the following
   - 2 single percision floats encoded into a 64 bit uint. 
     32 msb for lightness and 32 lsb for hue, both [0, 1] 
   - for black, set hue to something non-zero to make it truthy
+
+double maxAxis(cplxdbl x) can be used in place of cabs to prevent excessive hypot calls
 */
 uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i, cplxdbl orbit) {
     if (getfpbits64(creal(previous)) == getfpbits64(NAN)) return 0;
@@ -61,9 +64,9 @@ uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i, cplxdbl or
     // if(cabs(z - 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.3333);
     // if(cabs(z + 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.6666);
     // if(cabs(z - (0.5842914495640625+1.174489106633826*I)) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.9999);
-    if(cabs(z) > 2) return ((uint64_t)getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 50.0f * powf(1.1, cmdfeedI))) << 32) | getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 5.0f));
-    if(cabs(previous - z) < ITERA_EQ_THRES) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
-    if(ORBIT_DETECTION && cabs(orbit - z) < ORBIT_EQ_THRES) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
+    if(maxAxis(z) > 2) return ((uint64_t)getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 50.0f * powf(1.1, cmdfeedI))) << 32) | getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 5.0f));
+    if(maxAxis(previous - z) < ITERA_EQ_THRES) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
+    if(ORBIT_DETECTION && maxAxis(orbit - z) < ORBIT_EQ_THRES) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
     
