@@ -4,7 +4,7 @@
 /* settings.c */   cplxdbl iterator(cplxdbl x, cplxdbl c);
 /* auxiliaryFunctions.c */uint32_t hsl2rgb(double h, double s, double l);
 /* self */         uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall);
-/* settings.c */   uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i);
+/* settings.c */   uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i, cplxdbl orbit);
 /* render.c */     void generateBitmapImage(byte *image, int height, int width, char *fileName);
 
 /*
@@ -76,10 +76,11 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
 }
 
 // non-recursive calls must pass 1 to initialCall and/or NAN to previous
+// this version does not support orbit, this is commented out before it is implemented
 // uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
 //     if(initialCall) previous = NAN;
 
-//     uint64_t escdef = escapeManager(z, previous, c, maxIteration);
+//     uint64_t escdef = escapeManager(z, previous, c, maxIteration, 0);
 //     if(escdef > 0) return escdef;
     
 //     if(maxIteration == 0) return 0;
@@ -87,11 +88,18 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
 // }
 
 uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
+    
+    cplxdbl orbit = 0; // may be removed if orbit detection is off
+
     for(; maxIteration; maxIteration--) {
         previous = z;
         z = iterator(z, c);
         
-        uint64_t escdef = escapeManager(z, previous, c, maxIteration);
+        if(ORBIT_DETECTION && maxIteration | 1 && !initialCall) {
+            orbit = iterator(orbit, c);
+        }
+
+        uint64_t escdef = escapeManager(z, previous, c, maxIteration, orbit);
         if(escdef > 0) return escdef;
 
     }

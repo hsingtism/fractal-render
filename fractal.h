@@ -1,13 +1,17 @@
+#define PIXEL_FUNCTION 0 // like classic mandelbrot
+#define PIXEL_SEED 1     // "julian"
+
+#define ORBIT_DETECTION 0 // only useful for very deep iterations and/or very hard to iterate functions
+#define ITERA_EQ_THRES pow(2, -16)
+#define ORBIT_EQ_THRES pow(2, -32)
+
+#define IMAGE_SATURATION 1.0
+#define FP_INEXACT_WARNING_COEFFICENT 4.0
+
 #include <stdint.h>
 #include <complex.h>
 #include <stdio.h>
 #include <math.h>
-
-#define PIXEL_FUNCTION 0 // like classic mandelbrot
-#define PIXEL_SEED 1     // "julian"
-
-#define IMAGE_SATURATION 1.0
-#define FP_INEXACT_WARNING_COEFFICENT 4.0
 
 #define BLUE 0
 #define GREEN 1
