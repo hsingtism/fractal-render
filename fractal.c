@@ -75,22 +75,8 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
     printf("%s rendered\n", filename);
 }
 
-// non-recursive calls must pass 1 to initialCall and/or NAN to previous
-// this version does not support orbit, this is commented out before it is implemented
-// uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
-//     if(initialCall) previous = NAN;
-
-//     uint64_t escdef = escapeManager(z, previous, c, maxIteration, 0);
-//     if(escdef > 0) return escdef;
-    
-//     if(maxIteration == 0) return 0;
-//     return iterate(iterator(z, c), c, maxIteration - 1, z, 0);
-// }
-
 uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char initialCall) {
-    
     cplxdbl orbit = 0; // may be removed if orbit detection is off
-
     for(; maxIteration; maxIteration--) {
         previous = z;
         z = iterator(z, c);
@@ -99,8 +85,10 @@ uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char 
             orbit = iterator(orbit, c);
         }
 
-        uint64_t escdef = escapeManager(z, previous, c, maxIteration, orbit);
-        if(escdef > 0) return escdef;
+        if(maxIteration % ESCAPE_CHECK_FREQ == 0) {
+            uint64_t escdef = escapeManager(z, previous, c, maxIteration, orbit);
+            if(escdef > 0) return escdef;
+        }
 
     }
 

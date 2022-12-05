@@ -5,6 +5,10 @@
 #define ITERA_EQ_THRES pow(2, -16)
 #define ORBIT_EQ_THRES pow(2, -32)
 
+                             // a lower value (down to 1) may result in smoother colors for smoother coloring
+#define ESCAPE_CHECK_FREQ 5  // but the program may take a performance hit. Higher values may result in excessive
+                             // iterations. (~5 works the best for quadratic polynomials)
+
 #define IMAGE_SATURATION 1.0
 #define FP_INEXACT_WARNING_COEFFICENT 4.0
 

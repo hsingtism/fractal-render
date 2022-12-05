@@ -54,6 +54,7 @@ return value means the following
     32 msb for lightness and 32 lsb for hue, both [0, 1] 
   - for black, set hue to something non-zero to make it truthy
 
+NOTE: performance of this function is very important. this function may be called as often as the iterator
 double maxAxis(cplxdbl x) can be used in place of cabs to prevent excessive hypot calls
 */
 uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i, cplxdbl orbit) {
