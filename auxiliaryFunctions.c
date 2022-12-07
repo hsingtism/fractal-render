@@ -2,7 +2,7 @@
 
 // use only for debug
 void printComplex(cplxdbl z) {
-    printf("%f + i*%f\n", creal(z), cimag(z));
+    printf("%.17f + i*%.17f\n", creal(z), cimag(z));
 }
 
 void floatingPointPercisionWarn(cplxdbl topleft, cplxdbl bottomright, double pixelDeltaV, double pixelDeltaH) {

@@ -34,13 +34,24 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
 
     floatingPointPercisionWarn(topleft, bottomright, pixelDeltaV, pixelDeltaH);
 
+    cplxdbl previousPosition = NAN + NAN * I;
+    uint32_t previousPixelColor;
+
     for (int h = 0; h < height; h++) {
         for(int w = 0; w < width; w++) {
             cplxdbl position = topleft 
                 + pixelDeltaV * h * I
                 + pixelDeltaH * w;
-            uint64_t pixel = mode ? iterate(position, constant, maxIteration, 0, 1) : iterate(constant, position, maxIteration, 0, 1);
-            uint32_t color = hsl2rgb(setfpbits32(pixel), IMAGE_SATURATION, setfpbits32(pixel >> 32)); // be careful, lots of auto type casting
+            uint64_t pixel;
+            uint64_t color;
+            if(IDENTICAL_FP_CACHE && previousPosition == position) {
+                color = previousPixelColor;
+            } else {
+                pixel = mode ? iterate(position, constant, maxIteration, 0, 1) : iterate(constant, position, maxIteration, 0, 1);
+                color = hsl2rgb(setfpbits32(pixel), IMAGE_SATURATION, setfpbits32(pixel >> 32)); // be careful, lots of auto type casting
+                previousPosition = position;
+                previousPixelColor = color;
+            }
             image[3 * width * h + 3 * w + BLUE]  = color >> 8;
             image[3 * width * h + 3 * w + GREEN] = color >> 16;
             image[3 * width * h + 3 * w + RED]   = color >> 24;
