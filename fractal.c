@@ -7,6 +7,9 @@
 /* settings.c */   uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i, cplxdbl orbit);
 /* render.c */     void generateBitmapImage(byte *image, int height, int width, char *fileName);
 
+void floatingPointPercisionWarn(cplxdbl topleft, cplxdbl bottomright, double pixelDeltaV, double pixelDeltaH);
+void writeFileName(char* dest, int seqID);
+
 /*
 this giant function manages everything
 renders and save an image
@@ -29,22 +32,7 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
     double pixelDeltaV = cimag(imagesize) / height;
     double pixelDeltaH = creal(imagesize) / width;
 
-    double fpdelta_real = fmax( // in case the frame crosses exponents
-            fabs(creal(topleft) - setfpbits64(getfpbits64(creal(topleft)) ^ 0x1)),
-            fabs(creal(bottomright) - setfpbits64(getfpbits64(creal(bottomright)) ^ 0x1))
-        );
-    double fpdelta_imag = fmax(
-            fabs(cimag(topleft) - setfpbits64(getfpbits64(cimag(topleft)) ^ 0x1)),
-            fabs(cimag(bottomright) - setfpbits64(getfpbits64(cimag(bottomright)) ^ 0x1))
-        );
-
-    if(fpdelta_imag * FP_INEXACT_WARNING_COEFFICENT >= fabs(pixelDeltaV)) {
-        printf("potential floating point impercision. imag-axis avg r/p %f\n", fabs(pixelDeltaV) / fpdelta_imag);
-    }
-    if(fpdelta_real * FP_INEXACT_WARNING_COEFFICENT >= fabs(pixelDeltaH)) {
-        printf("potential floating point impercision. real-axis avg r/p %f\n", fabs(pixelDeltaH) / fpdelta_real);
-    }
-
+    floatingPointPercisionWarn(topleft, bottomright, pixelDeltaV, pixelDeltaH);
 
     for (int h = 0; h < height; h++) {
         for(int w = 0; w < width; w++) {
@@ -60,15 +48,7 @@ void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl constant, byte mo
     }
 
     char filename[13];
-    for (char exp = 7; exp > -1; exp--) { // base conversion
-        filename[exp] = (byte)(48 + seqID % 10);
-        seqID /= 10;
-    }
-    filename[8] = (byte)'.';
-    filename[9] = (byte)'b';
-    filename[10] = (byte)'m';
-    filename[11] = (byte)'p';
-    filename[12] = (byte)0;
+    writeFileName(filename, seqID);
 
     generateBitmapImage(image, height, width, filename);
     free(image);

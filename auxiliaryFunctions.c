@@ -1,21 +1,45 @@
 #include "fractal.h"
 
-
-
 // use only for debug
 void printComplex(cplxdbl z) {
     printf("%f + i*%f\n", creal(z), cimag(z));
 }
 
+void floatingPointPercisionWarn(cplxdbl topleft, cplxdbl bottomright, double pixelDeltaV, double pixelDeltaH) {
+    double fpdelta_real = fmax( // in case the frame crosses exponents
+            fabs(creal(topleft) - setfpbits64(getfpbits64(creal(topleft)) ^ 0x1)),
+            fabs(creal(bottomright) - setfpbits64(getfpbits64(creal(bottomright)) ^ 0x1))
+        );
+    double fpdelta_imag = fmax(
+            fabs(cimag(topleft) - setfpbits64(getfpbits64(cimag(topleft)) ^ 0x1)),
+            fabs(cimag(bottomright) - setfpbits64(getfpbits64(cimag(bottomright)) ^ 0x1))
+        );
 
+    if(fpdelta_imag * FP_INEXACT_WARNING_COEFFICENT >= fabs(pixelDeltaV)) {
+        printf("potential floating point impercision. imag-axis avg r/p %f\n", fabs(pixelDeltaV) / fpdelta_imag);
+    }
+    if(fpdelta_real * FP_INEXACT_WARNING_COEFFICENT >= fabs(pixelDeltaH)) {
+        printf("potential floating point impercision. real-axis avg r/p %f\n", fabs(pixelDeltaH) / fpdelta_real);
+    }
+}
+
+void writeFileName(char* dest, int seqID) {
+    for (char exp = 7; exp > -1; exp--) { // base conversion
+        dest[exp] = (byte)(48 + seqID % 10);
+        seqID /= 10;
+    }
+    dest[8] = (byte)'.';
+    dest[9] = (byte)'b';
+    dest[10] = (byte)'m';
+    dest[11] = (byte)'p';
+    dest[12] = (byte)0;
+}
 
 // floating point <-> its bit representation
 uint64_t getfpbits64(double x) { return * ( uint64_t * ) &x; }
 double setfpbits64(uint64_t x) { return * ( double * ) &x; }
 uint32_t getfpbits32(float x) { return * ( uint32_t * ) &x; }
 float setfpbits32(uint32_t x) { return * ( float * ) &x; }
-
-
 
 cplxdbl mandelbrot(cplxdbl x, cplxdbl c) {
     return x * x + c;
@@ -41,8 +65,6 @@ cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling) 
     if (degree == 0) return scaling;
     return polynomialRoots(x, roots, degree - 1, scaling * (x - roots[degree - 1]));
 }
-
-
 
 // based on https://stackoverflow.com/a/9493060/15879600
 double hsl2rgb_internal_1(double p, double q, double t) {
