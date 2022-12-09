@@ -52,14 +52,6 @@ cplxdbl mean(cplxdbl *val, int length) {
     return val[0] / length;
 }
 
-cplxdbl newtonRoots(cplxdbl x, cplxdbl *roots, int degree) {
-    return x - polynomialRoots(x, roots, degree, 1) / polyDerivRoots(x, roots, degree, 1);
-}
-
-cplxdbl newtonCoeff(cplxdbl x, cplxdbl *coefficents, int degree) {
-    return x - polynomialCoeff(x, coefficents, degree, 1) / polyDerivRoots(x, coefficents, degree, 1);
-}
-
 // polynomial eval with horners method
 // accumlator is used for internal recusion, set to 0
 cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator) {
@@ -76,26 +68,35 @@ cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling) 
 
 // evaluate p'(x) for polynomial p from coefficents
 // TODO make differentiation internally recursive
-cplxdbl polyDerivCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator) {
-    const int originalDegree = degree;
-    cplxdbl derviativeCoeff[originalDegree];
-    for(; degree > 0; degree--) {
-        derviativeCoeff[degree - 1] = coefficents[degree] * degree;
-    }
-    return polynomialCoeff(x, derviativeCoeff, originalDegree, accumlator);
-}
+// cplxdbl polyDerivCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator) {
+//     const int originalDegree = degree;
+//     cplxdbl derviativeCoeff[originalDegree];
+//     for(; degree > 0; degree--) {
+//         derviativeCoeff[degree - 1] = coefficents[degree] * degree;
+//     }
+//     return polynomialCoeff(x, derviativeCoeff, originalDegree, accumlator);
+// }
 
 // evaluate p'(x) for polynomial p from roots
 // TODO implement differently so nan would not be returned at roots
-// TODO WARNING: this functions returns nan for p'(x) if p(x) = 0, this should not pop up in most cases but still be careful
-cplxdbl polyDerivRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling) {
-    const int originalDegree = degree;
-    cplxdbl accumlator = 0;
-    for(; degree; degree--) {
-        accumlator += 1 / (x - roots[degree - 1]);
-    }
-    return accumlator * polynomialRoots(x, roots, originalDegree, scaling);
-}
+// TODO WARNING: this functions returns nan for p'(x) if p(x) = 0, rewrite to fix
+// cplxdbl polyDerivRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling) {
+//     const int originalDegree = degree;
+//     cplxdbl accumlator = 0;
+//     for(; degree; degree--) {
+//         accumlator += 1 / (x - roots[degree - 1]);
+//     }
+//     return accumlator * polynomialRoots(x, roots, originalDegree, scaling);
+// }
+
+//TODO optimize this
+// cplxdbl newtonRoots(cplxdbl x, cplxdbl *roots, int degree) {
+//     return x - polynomialRoots(x, roots, degree, 1) / polyDerivRoots(x, roots, degree, 1);
+// }
+
+// cplxdbl newtonCoeff(cplxdbl x, cplxdbl *coefficents, int degree) {
+//     return x - polynomialCoeff(x, coefficents, degree, 1) / polyDerivRoots(x, coefficents, degree, 1);
+// }
 
 // based on https://stackoverflow.com/a/9493060/15879600
 double hsl2rgb_internal_1(double p, double q, double t) {

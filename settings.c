@@ -3,31 +3,25 @@
 double maxAxis(cplxdbl x);
 void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration);
 
-#define CENTER 0.3602404434377639253623 - 0.6413130610647825040291 * I
-#define Z_SPEED_R 1
-#define Z_SPEED_I 1
-int maxIter_GLOBAL = 0;
-#include "defineI.h"
+//TODO auto color management for newton
+//TODO escape tempate for mandelbrot
+//TODO template for zoom
 
 /* DEFINES WHAT TO DO WHEN PROGRAM IS STARTED */
 int main() {
 
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
-    int i = cmdfeedI - 4;
-    // for(int i = 8; i < 20; i++) {
-        maxIter_GLOBAL = (int)exp((double)i / 5 + 9); // TODO a way to detect this
-        printf("%d\n", maxIter_GLOBAL);
+
         renderFrame(
-            /* topleft */     CENTER - cexp(-i * Z_SPEED_R) + cexp(-i * Z_SPEED_I) * I,//-2 + 2 * I,
-            /* bottomright */ CENTER + cexp(-i * Z_SPEED_R) - cexp(-i * Z_SPEED_I) * I,//2 - 2 * I,
+            /* topleft */     -2 + 2 * I,
+            /* bottomright */ 2 - 2 * I,
             /* constant */    0 + 0 * I,  // optional depending on how the iterator is set up
-            /* iterated val*/ PIXEL_FUNCTION, // PIXEL_SEED maps pixel to "z", PIXEL_FUNCTION maps pixel to "c"
+            /* iterated val*/ PIXEL_SEED, // PIXEL_SEED maps pixel to "z", PIXEL_FUNCTION maps pixel to "c"
             /* image width */ 1000,
             /* image height */1000,
-            /* file name*/    i + 16,
-            /* max iteration*/maxIter_GLOBAL
+            /* file name*/    7,
+            /* max iteration*/1000
         );
-    // }
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
     
@@ -50,17 +44,14 @@ NOTE: performance of this function is very important. this function may be calle
 double maxAxis(cplxdbl x) can be used in place of cabs to prevent excessive hypot calls
 */
 uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i, cplxdbl orbit) {
-    if (getfpbits64(creal(previous)) == getfpbits64(NAN)) return 0;
+    if (isnan(creal(z))) return 0x1; // returns if NAN
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
 
-    // if(cabs(z - 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.3333);
-    // if(cabs(z + 1.0) < 0.1)                                      return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.6666);
-    // if(cabs(z - (0.5842914495640625+1.174489106633826*I)) < 0.1) return ((uint64_t)getfpbits32(1.0) << 32) | getfpbits32(0.9999);
-    if(maxAxis(z) > 2) return ((uint64_t)getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 50.0f * powf(1.1, cmdfeedI))) << 32) | getfpbits32(powf((float)i / (float)maxIter_GLOBAL, 5.0f));
-    if(maxAxis(previous - z) < ITERA_EQ_THRES) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
-    if(ORBIT_DETECTION && maxAxis(orbit - z) < ORBIT_EQ_THRES) return ((uint64_t)getfpbits32(0.0) << 32) | getfpbits32(0.1);
-    
+    if(maxAxis(z - 1.0) < ITERA_EQ_THRES)                                      return ((uint64_t)getfpbits32(0.5f) << 32) | getfpbits32(0.3333f);
+    if(maxAxis(z + 1.0) < ITERA_EQ_THRES)                                      return ((uint64_t)getfpbits32(0.5f) << 32) | getfpbits32(0.6666f);
+    if(maxAxis(z - (0.5842914495640625+1.174489106633826*I)) < ITERA_EQ_THRES) return ((uint64_t)getfpbits32(0.5f) << 32) | getfpbits32(0.9999f);
+
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */
     
     return 0;
@@ -80,13 +71,13 @@ cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl acc
 //  evaluate polynomial with roots
 cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
 
+// TODO these don't work
 //  evaluate the derviative of a polynomial  
-cplxdbl polyDerivRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
-cplxdbl polyDerivCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
-
+// cplxdbl polyDerivRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
+// cplxdbl polyDerivCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
 //  iterate via newton's method
-cplxdbl newtonRoots(cplxdbl x, cplxdbl *roots, int degree);
-cplxdbl newtonCoeff(cplxdbl x, cplxdbl *coefficents, int degree);
+// cplxdbl newtonRoots(cplxdbl x, cplxdbl *roots, int degree);
+// cplxdbl newtonCoeff(cplxdbl x, cplxdbl *coefficents, int degree);
 
 //  calculates the mean of array
 cplxdbl mean(cplxdbl *val, int length);
@@ -95,8 +86,12 @@ cplxdbl iterator(cplxdbl x, cplxdbl c) {
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */
     
-    x = mandelbrot(x, c);
-    // (x - (0.5842914495640625+1.174489106633826*I)))
+    // x = mandelbrot(x, c);
+    cplxdbl roots[3] = {-1, 1, 0.5842914495640625+1.174489106633826*I};
+    // x -= ((x * x - 1) * (x - (0.5842914495640625+1.174489106633826*I)))
+    //      / (2 * x * (x - (0.5842914495640625+1.174489106633826*I)) + (x * x - 1));
+    x -= polynomialRoots(x, roots, 3, 1)
+         / (2 * x * (x - (0.5842914495640625+1.174489106633826*I)) + (x * x - 1));
 
     
     /* ---------------- EDIT ABOVE THIS LINE ---------------- */

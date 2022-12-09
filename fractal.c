@@ -78,6 +78,7 @@ uint64_t iterate(cplxdbl z, cplxdbl c, int maxIteration, cplxdbl previous, char 
 
         if(maxIteration % ESCAPE_CHECK_FREQ == 0) {
             uint64_t escdef = escapeManager(z, previous, c, maxIteration, orbit);
+            if(escdef == 1) return 0;
             if(escdef > 0) return escdef;
         }
 

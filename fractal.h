@@ -3,11 +3,11 @@
 
 #define ORBIT_DETECTION 0    // only useful for *very* deep iterations and/or very hard to iterate functions
 #define IDENTICAL_FP_CACHE 1 // enable if rendering near the floating point percision limit
-#define ITERA_EQ_THRES pow(2, -16)
+#define ITERA_EQ_THRES pow(2, -4)
 #define ORBIT_EQ_THRES pow(2, -32)
 
                              // a lower value (down to 1) may result in smoother colors for smoother coloring
-#define ESCAPE_CHECK_FREQ 5  // but the program may take a performance hit. Higher values may result in excessive
+#define ESCAPE_CHECK_FREQ 1  // but the program may take a performance hit. Higher values may result in excessive
                              // iterations. (~5 works the best for quadratic polynomials)
 
 #define IMAGE_SATURATION 1.0
