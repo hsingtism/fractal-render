@@ -1,15 +1,7 @@
 #include "fractal.h"
 
-cplxdbl mandelbrot(cplxdbl x, cplxdbl c);
-cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
-cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
-cplxdbl mean(cplxdbl *val, int length);
 double maxAxis(cplxdbl x);
 void renderFrame(cplxdbl topleft, cplxdbl bottomright, cplxdbl secondParameter, byte mode, int width, int height, int seqID, int maxIteration);
-
-// TODO derviative calculation for newtons method
-// TODO memoization for values very close to each other
-
 
 #define CENTER 0.3602404434377639253623 - 0.6413130610647825040291 * I
 #define Z_SPEED_R 1
@@ -78,25 +70,27 @@ uint64_t escapeManager(cplxdbl z, cplxdbl previous, cplxdbl c, int i, cplxdbl or
 The pixel value is iterated here. 
 All basic operations ( + - * / ) and functions supported by complex.h is avilable here
 
-Additionally, the following functions are intended to be used in here
-
-cplxdbl mean(cplxdbl *val, int length);
-  - calculates the mean of array
-
+Additionally, the following functions are intended to be used in here */
+//  iterate with the mandelbrot set function
 cplxdbl mandelbrot(cplxdbl x, cplxdbl c);
-  - iterate with the mandelbrot set function 
-cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
-  - evaluate polynomials with a list of coefficents (horners method)
-cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
-  - evaluate polynomials with a list of roots (simple x - root method)
-  - x is value
-  - *coefficents or *roots is an array of coefficents and roots
-  - *coefficents must be in reverse standard form c[d] is the coefficent of x^d
-  - degree is the degree of the polynomial
-  - accumlator should be 0 
-  - scaling should be 1 (or the factored out constant)
 
-*/
+//  evaluate polynomial with coefficents
+cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
+
+//  evaluate polynomial with roots
+cplxdbl polynomialRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
+
+//  evaluate the derviative of a polynomial  
+cplxdbl polyDerivRoots(cplxdbl x, cplxdbl *roots, int degree, cplxdbl scaling);
+cplxdbl polyDerivCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator);
+
+//  iterate via newton's method
+cplxdbl newtonRoots(cplxdbl x, cplxdbl *roots, int degree);
+cplxdbl newtonCoeff(cplxdbl x, cplxdbl *coefficents, int degree);
+
+//  calculates the mean of array
+cplxdbl mean(cplxdbl *val, int length);
+
 cplxdbl iterator(cplxdbl x, cplxdbl c) {
     
     /* ---------------- EDIT BELOW THIS LINE ---------------- */

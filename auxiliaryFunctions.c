@@ -52,6 +52,14 @@ cplxdbl mean(cplxdbl *val, int length) {
     return val[0] / length;
 }
 
+cplxdbl newtonRoots(cplxdbl x, cplxdbl *roots, int degree) {
+    return x - polynomialRoots(x, roots, degree, 1) / polyDerivRoots(x, roots, degree, 1);
+}
+
+cplxdbl newtonCoeff(cplxdbl x, cplxdbl *coefficents, int degree) {
+    return x - polynomialCoeff(x, coefficents, degree, 1) / polyDerivRoots(x, coefficents, degree, 1);
+}
+
 // polynomial eval with horners method
 // accumlator is used for internal recusion, set to 0
 cplxdbl polynomialCoeff(cplxdbl x, cplxdbl *coefficents, int degree, cplxdbl accumlator) {
