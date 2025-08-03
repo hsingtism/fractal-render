@@ -1,5 +1,6 @@
 using Colors
 
+## todo work on these
 linearBlue = maxIter -> v -> HSL(240, 1.0, v / maxIter)
 rootBlue = maxIter -> v -> HSL(240, 1.0, (v / maxIter) ^ (1 / 3))
 rootBlueBlackPoint = maxIter -> blackPoint -> v -> HSL(240, 0, (max(v - blackPoint, 0) / (maxIter - blackPoint)) ^ (1 / 15))
