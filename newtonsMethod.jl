@@ -1,6 +1,7 @@
 using Colors, LinearAlgebra
 
-equalHueSpace = rootCount -> rootNumber -> HSL((rootNumber - 1) * 360 / rootCount, 1, 0.5)
+equalHueSpace = rootCount -> v::Tuple -> HSL((v[1] - 1) * 360 / rootCount, 1, 0.5)
+darkenEdgesEqualHue = rootCount -> v::Tuple -> HSL((v[1] - 1) * 360 / rootCount, 1, max(1 - log(v[2]) / 7, 0))
 
 polynomialEvalRoots = (roots, x) -> prod(x .- roots)
 
@@ -16,12 +17,15 @@ closestRoot = (roots, z) -> argmin(rootProximity(roots, z))[2]
 closestRootDistance = (roots, z) -> minimum(rootProximity(roots, z))
 
 function newtonIterator(escapeThreshold, roots, z)
+    i = 0
     while true
+        i += 1
         z = z - polynomialEvalRoots(roots, z) / polynomialDerivativeEvalRoots(roots, z)
         if closestRootDistance(roots, z) > escapeThreshold continue end
-        return closestRoot(roots, z)
+        return (closestRoot(roots, z), i)
     end
-    # return 0
 end
 
 newtonPolynomial = (convegenceThreshold, roots) -> z::ComplexF64 -> newtonIterator(convegenceThreshold, roots, z)
+
+rootsOfUnity = n -> transpose(map(x -> exp(x / n * 2pi * im), 0:n-1))

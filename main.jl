@@ -10,12 +10,12 @@ function coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
     return realCoords'.+ reverse(imagCoords)
 end
 
-function exportImage(mapper, colorer, center, radiusH, heightPixels, widthPixels)
+function exportImage(mapper, colorer, center = 0.0+0.0im, radiusH = 2, 
+    heightPixels = 1000, widthPixels = 1000, filename = "image.png")
+    
     radiusW = radiusH * widthPixels / heightPixels
     coordinates = coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
     mappedVals = ThreadsX.map(mapper, coordinates)
-
-    # blackPoint = minimum(filter(x -> x != 0, mappedVals))
     pixelVals = map(colorer, mappedVals)
-    save("image.png", pixelVals)
+    save(filename, pixelVals)
 end
