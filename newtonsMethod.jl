@@ -1,7 +1,8 @@
 using Colors, LinearAlgebra
 
-equalHueSpace = rootCount -> v::Tuple -> HSL((v[1] - 1) * 360 / rootCount, 1, 0.5)
-darkenEdgesEqualHue = rootCount -> v::Tuple -> HSL((v[1] - 1) * 360 / rootCount, 1, max(1 - log(v[2]) / 7, 0))
+equalHueSpace = rootCount -> v::Tuple -> v[1] == -1 ? HSL(0, 0, 0) : HSL((v[1] - 1) * 360 / rootCount, 1, 0.5)
+
+darkenEdgesEqualHue = (rootCount::Int, inverseDarkenAmount = 5) -> v::Tuple -> v[1] == -1 ? HSL(0, 0, 0) : HSL((v[1] - 1) * 360 / rootCount, 1, max(1 - log(v[2]) / inverseDarkenAmount, 0))
 
 polynomialEvalRoots = (roots, x) -> prod(x .- roots)
 
@@ -13,19 +14,19 @@ function polynomialDerivativeEvalRoots(roots, x)
 end
 
 rootProximity = (roots, z) -> map(x -> abs(x - z), roots)
-closestRoot = (roots, z) -> argmin(rootProximity(roots, z))[2]
+closestRoot = (roots, z) -> argmin(rootProximity(roots, z))
 closestRootDistance = (roots, z) -> minimum(rootProximity(roots, z))
 
-function newtonIterator(escapeThreshold, roots, z)
-    i = 0
-    while true
-        i += 1
+function newtonIterator(escapeThreshold, roots, z, dwellLimit)
+    for i in 1:dwellLimit
         z = z - polynomialEvalRoots(roots, z) / polynomialDerivativeEvalRoots(roots, z)
         if closestRootDistance(roots, z) > escapeThreshold continue end
         return (closestRoot(roots, z), i)
     end
+
+    return (-1, dwellLimit)
 end
 
-newtonPolynomial = (convegenceThreshold, roots) -> z::ComplexF64 -> newtonIterator(convegenceThreshold, roots, z)
+newtonPolynomial = (roots, convegenceThreshold = 0.0001, dwellLimit = 100000) -> z::ComplexF64 -> newtonIterator(convegenceThreshold, roots, z, dwellLimit)
 
-rootsOfUnity = n -> transpose(map(x -> exp(x / n * 2pi * im), 0:n-1))
+rootsOfUnity = n -> map(x -> exp(x / n * 2pi * im), 0:n-1)
