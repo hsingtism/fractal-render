@@ -3,7 +3,6 @@ using Colors
 ## todo work on these
 linearBlue = maxIter -> v -> HSL(240, 1.0, v / maxIter)
 rootBlue = maxIter -> v -> HSL(240, 1.0, (v / maxIter) ^ (1 / 3))
-rootBlueBlackPoint = maxIter -> blackPoint -> v -> HSL(240, 0, (max(v - blackPoint, 0) / (maxIter - blackPoint)) ^ (1 / 15))
 chromaBlack = maxIter -> v -> HSL(((v / maxIter) * 500) * 360 % 360, 1.0, v == 0 ? 0 : 0.5)
 
 # interesting region in Mandelbrot for testing
@@ -24,17 +23,10 @@ end
 mandelbrot = maxIter -> c::ComplexF64 -> quadraticLoop(ComplexF64(0), c, maxIter)
 julia = (maxIter, c::ComplexF64) -> z::ComplexF64 -> quadraticLoop(z, c, maxIter)
 
-function freeMandelbrot(z::ComplexF64, c::ComplexF64, p::ComplexF64, maxIter)
-
-    println(maxIter)
-    println(z)
-    println(c)
-    println(p)
-    return
-
+function freeMandelbrot(z::ComplexF64, c::ComplexF64, p::ComplexF64, maxIter, escapeThreshold::Real)
     for i in 1:maxIter
         z = z ^ p + c
-        if abs(z) > 2
+        if abs(z) > escapeThreshold
             return i
         end
     end
@@ -42,7 +34,6 @@ function freeMandelbrot(z::ComplexF64, c::ComplexF64, p::ComplexF64, maxIter)
     return 0
 end
 
-## ! untested
-weirdMandelbrot = (maxIter, zcpCoefficients, zcpConstants) -> screenPos::ComplexF64 -> 
-    freeMandelbrot((zcpCoefficients * screenPos + zcpConstants)..., maxIter)
+weirdMandelbrot = (maxIter, zcpCoefficients, zcpConstants, escapeThreshold::Real = 2) -> screenPos::ComplexF64 -> 
+    freeMandelbrot((zcpCoefficients * screenPos + zcpConstants)..., maxIter, escapeThreshold)
 
