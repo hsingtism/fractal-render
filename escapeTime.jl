@@ -1,9 +1,10 @@
 using Colors
 
-## todo work on these
 linearBlue = maxIter -> v -> HSL(240, 1.0, v / maxIter)
 rootBlue = maxIter -> v -> HSL(240, 1.0, (v / maxIter) ^ (1 / 3))
-chromaBlack = maxIter -> v -> HSL(((v / maxIter) * 500) * 360 % 360, 1.0, v == 0 ? 0 : 0.5)
+chromaBlack = (maxIter, stretch = 500) -> v -> HSL(((v / maxIter) * stretch) * 360 % 360, 1.0, v == 0 ? 0 : 0.5)
+
+histogramBlue = linearBlue(1)
 
 # interesting region in Mandelbrot for testing
 center::ComplexF64 =  -1.258968 + 0.034573im
