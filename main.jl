@@ -10,7 +10,7 @@ function coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
     return realCoords'.+ reverse(imagCoords)
 end
 
-function exportImage(mapper, colorer, center = 0.0+0.0im, radiusH = 2,
+function genericMapImage(mapper, colorer, center = 0.0+0.0im, radiusH = 2,
     heightPixels = 1000, widthPixels = 1000, filename = "image.png")
     
     radiusW = radiusH * widthPixels / heightPixels
