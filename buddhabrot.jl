@@ -1,19 +1,17 @@
 using Images, ThreadsX, Colors
 
+complexRectangularBetween = (lo, hi) -> x -> real(lo) <= real(x) <= real(hi) && imag(lo) <= imag(x) <= imag(hi) 
+
 function buddhabrotSampleMap(c::ComplexF64, maxIter)
     z = ComplexF64(0)
     visitedPoints = ComplexF64[]
 
     for i in 1:maxIter
         z = z * z + c
-        if abs(real(z)) > 2 || abs(imag(z)) > 2
-            return visitedPoints
-        end
-        if abs(z) > 2
-            push!(visitedPoints, z)
-            return visitedPoints
-        end
         push!(visitedPoints, z)
+        if abs(z) > 2
+            return visitedPoints
+        end
     end
 
     return ComplexF64[] # does not escape, in the set
@@ -34,28 +32,36 @@ function antibuddhabrotSampleMap(c::ComplexF64, maxIter)
     return visitedPoints
 end
 
-function buddhabrot(maxIterations, additionalPointFactor = 1, center = 0.0+0.0im, radiusH = 2,
-    heightPixels = 1000, widthPixels = 1000,  
-    filename = "antibuddhabrot.png")
+function evalulateSamples(samples, sampleMap::Function, maxIter, pixelCoordinates::Matrix{ComplexF64})
+    visitedValuesAll = map(x -> sampleMap(x, maxIter), samples) |> Iterators.flatten |> collect
+    visitedValues = filter(complexRectangularBetween(pixelCoordinates[end, 1], pixelCoordinates[1, end]), visitedValuesAll)
+    
+    imageCoordReal = pixelCoordinates[1, :] .|> real
+    imageCoordImag = pixelCoordinates[:, 1] .|> imag
+    incrementIndex = visitedValues .|> visited -> [findfirst(t -> t <= imag(visited), imageCoordImag), findfirst(t -> t >= real(visited), imageCoordReal)]
+
+    pixelVals = pixelCoordinates .|> x -> 0
+    incrementIndex .|> v -> pixelVals[v...] += 1 # ! mutation
+
+    return pixelVals
+end
+
+function buddhabrot(maxIterations, sampleGridSide = 1000, pixelsPerBatch = 1408, center = 0.0+0.0im, radiusH = 2,
+    heightPixels = 1000, widthPixels = 1000, filename = "buddhabrot.png")
 
     radiusW = radiusH * widthPixels / heightPixels
     
-    coordinatesSampleMatrix = coordinateMatrix(center, radiusW, radiusH, widthPixels * additionalPointFactor, heightPixels * additionalPointFactor)
-    coordinatesSampleVec = vec(coordinatesSampleMatrix)
-    visitedValuesMatrix = ThreadsX.map(x -> buddhabrotSampleMap(x, maxIterations), coordinatesSampleVec)
-    visitedValues = visitedValuesMatrix |> Iterators.flatten |> collect
-    # TODO prevent too much memory use
+    coordinatesSampleVec = coordinateMatrix(ComplexF64(0), 2, 2, sampleGridSide, sampleGridSide) |> vec
+    coordinatesSamplePadded = [coordinatesSampleVec; fill(NaN + 0.0im, pixelsPerBatch - length(coordinatesSampleVec) % pixelsPerBatch)]
+    coordinatesSampleWrapped = reshape(coordinatesSamplePadded, Int(length(coordinatesSamplePadded) / pixelsPerBatch), pixelsPerBatch)
     
     coordinatesImage = coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
-    imageCoordReal = coordinatesImage[1, :] .|> real
-    imageCoordImag = coordinatesImage[:, 1] .|> imag
-    incrementIndex = visitedValues .|> visited -> [findfirst(t -> t <= imag(visited), imageCoordImag), findfirst(t -> t >= real(visited), imageCoordReal)]
+    
+    mappedVals = ThreadsX.sum(evalulateSamples(batchSample, buddhabrotSampleMap, maxIterations, coordinatesImage) 
+        for batchSample in eachrow(coordinatesSampleWrapped))
 
-    pixelVals = coordinatesImage .|> x -> 0
-    incrementIndex .|> v -> pixelVals[v...] += 1 # ! mutation
-
-    maxBucket = maximum(pixelVals)
-    pixelVals = map(x -> HSL(180, 0.5, x / maxBucket), pixelVals) # ! mutation
+    maxBucket = maximum(mappedVals)
+    pixelVals = map(x -> HSL(180, 0.5, x / maxBucket), mappedVals)
     save(filename, pixelVals)
 
 end
