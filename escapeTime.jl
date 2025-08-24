@@ -2,7 +2,10 @@ using Colors
 
 linearBlue = maxIter -> v -> HSL(240, 1.0, v / maxIter)
 rootBlue = (maxIter, nRoot = 3) -> v -> HSL(240, 1.0, (v / maxIter) ^ (1 / nRoot))
-chromaBlack = (maxIter, stretch = 500) -> v -> HSL(((v / maxIter) * stretch) * 360 % 360, 1.0, v == 0 ? 0 : 0.5)
+logBlue = maxIter -> v -> HSL(240, 1.0, log(v + 1) / log(maxIter + 1))
+
+chromaBlack = (maxIter, stretch = 300) -> v -> HSL(((v / maxIter) * stretch) * 360, 1.0, v == 0 ? 0 : 0.5)
+moduloColor = (colors = 6, offset = 0) -> v -> HSL(360 / colors * (v % colors) + offset, 1.0, v == 0 ? 0 : 0.5) 
 
 histogramBlue = linearBlue(1)
 

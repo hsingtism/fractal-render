@@ -46,8 +46,8 @@ function evalulateSamples(samples, sampleMap::Function, maxIter, pixelCoordinate
     return pixelVals
 end
 
-function buddhabrot(maxIterations, sampleGridSide = 1000, pixelsPerBatch = 1408, center = 0.0+0.0im, radiusH = 2,
-    heightPixels = 1000, widthPixels = 1000, filename = "buddhabrot.png")
+function buddhabrot(maxIterations, sampleGridSide = 1000, pixelsPerBatch = 22000, center = 0.0+0.0im, radiusH = 2,
+    mapper = buddhabrotSampleMap, colorer = logBlue, heightPixels = 1000, widthPixels = 1000, filename = "buddhabrot.png")
 
     radiusW = radiusH * widthPixels / heightPixels
     
@@ -57,11 +57,11 @@ function buddhabrot(maxIterations, sampleGridSide = 1000, pixelsPerBatch = 1408,
     
     coordinatesImage = coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
     
-    mappedVals = ThreadsX.sum(evalulateSamples(batchSample, buddhabrotSampleMap, maxIterations, coordinatesImage) 
+    mappedVals = ThreadsX.sum(evalulateSamples(batchSample, mapper, maxIterations, coordinatesImage) 
         for batchSample in eachrow(coordinatesSampleWrapped))
 
-    maxBucket = maximum(mappedVals)
-    pixelVals = map(x -> HSL(180, 0.5, x / maxBucket), mappedVals)
+    adaptedColorer = mappedVals |> maximum |> colorer
+    pixelVals = map(adaptedColorer, mappedVals)
     save(filename, pixelVals)
 
 end
