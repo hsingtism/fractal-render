@@ -57,7 +57,7 @@ function buddhabrot(maxIterations, sampleGridSide = 1000, pixelsPerBatch = 22000
     
     coordinatesImage = coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
     
-    mappedVals = ThreadsX.sum(evalulateSamples(batchSample, mapper, maxIterations, coordinatesImage) 
+    global lastMappedValues = mappedVals = ThreadsX.sum(evalulateSamples(batchSample, mapper, maxIterations, coordinatesImage) 
         for batchSample in eachrow(coordinatesSampleWrapped))
 
     adaptedColorer = mappedVals |> maximum |> colorer

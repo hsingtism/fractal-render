@@ -1,5 +1,11 @@
 using Images, ThreadsX
 
+# for access from REPL
+lastCoordinateMatrix = nothing
+lastMappedValues = nothing
+recolorLastMap = (colorer::Function, filename = "recolor.png") -> 
+    save(filename, lastMappedValues .|> colorer) 
+
 function coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
     centerRealPart = real(center)
     centerImagPart = imag(center) * im
@@ -7,7 +13,7 @@ function coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
     realCoords = LinRange(centerRealPart - radiusW, centerRealPart + radiusW, widthPixels)
     imagCoords = LinRange(centerImagPart - radiusH * im, centerImagPart + radiusH * im, heightPixels)
 
-    return realCoords'.+ reverse(imagCoords)
+    return global lastCoordinateMatrix = realCoords'.+ reverse(imagCoords)
 end
 
 function genericMapImage(mapper, colorer, center = 0.0+0.0im, radiusH = 2,
@@ -15,7 +21,7 @@ function genericMapImage(mapper, colorer, center = 0.0+0.0im, radiusH = 2,
     
     radiusW = radiusH * widthPixels / heightPixels
     coordinates = coordinateMatrix(center, radiusW, radiusH, widthPixels, heightPixels)
-    mappedVals = ThreadsX.map(mapper, coordinates)
+    global lastMappedValues = mappedVals = ThreadsX.map(mapper, coordinates)
     pixelVals = map(colorer, mappedVals)
     save(filename, pixelVals)
 end
@@ -34,7 +40,7 @@ function histogramImage(mapper, colorer, center = 0.0+0.0im, radiusH = 2, bright
     mappedVals = ThreadsX.map(mapper, coordinates)
     
     pixelBoundries = normalizedPixelValueBoundry(mappedVals, brightStretch)
-    histogramVals = mappedVals .|> x -> findfirst(v -> v >= x, pixelBoundries) - 1 .|> x -> x / 256
+    global lastMappedValues = histogramVals = mappedVals .|> x -> findfirst(v -> v >= x, pixelBoundries) - 1 .|> x -> x / 256
 
     pixelVals = map(colorer, histogramVals)
     save(filename, pixelVals)

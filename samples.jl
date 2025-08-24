@@ -23,3 +23,6 @@ histogramImage(weirdMandelbrot(200, [0.5, 0.5, 0], [0, 1.15im, 3 + 0.5im], 6), h
 
 genericMapImage(weirdMandelbrot(200, [1, 0, 0], [0, 1.15im, 3 + 0.5im], 6), rootBlue(200))
 genericMapImage(weirdMandelbrot(200, [1, 0, 0], [0, 1.15im, 3 + 0.5im], 6), chromaBlack(200))
+
+# buddhabrot, must include buddhabrot.jl
+buddhabrot(5000, 2000, 100000)

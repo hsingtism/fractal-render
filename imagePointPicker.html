@@ -1,0 +1,5 @@
+<img src="image.png" alt="fractal" id="mainImage">
+<p id="out"></p>
+<script>document.getElementById("mainImage").addEventListener('click', e => {
+    document.getElementById('out').innerText = `[${e.offsetX}, ${e.offsetY}]`
+})</script>
